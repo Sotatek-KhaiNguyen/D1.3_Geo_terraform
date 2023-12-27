@@ -22,10 +22,18 @@ resource "aws_instance" "bastion" {
   sudo ./aws/install
   aws --version
   aws configure --profile default set region ${var.common.region}
-  aws configure --profile default set aws_access_key_id ${var.iam_credentials.key}
-  aws configure --profile default set aws_secret_access_key ${var.iam_credentials.secret}
+  aws configure --profile default set aws_access_key_id ${jsondecode(data.aws_secretsmanager_secret_version.ugc_secret_version.secret_string)["key"]}
+  aws configure --profile default set aws_secret_access_key ${jsondecode(data.aws_secretsmanager_secret_version.ugc_secret_version.secret_string)["secret"]}
   aws configure list
   EOF
+}
+
+data "aws_secretsmanager_secret" "ugc_secret_dev" {
+  name = "ugc_secret_dev"
+}
+
+data "aws_secretsmanager_secret_version" "ugc_secret_version" {
+  secret_id = data.aws_secretsmanager_secret.ugc_secret_dev.id
 }
 
 resource "aws_security_group" "allow_ssh" {

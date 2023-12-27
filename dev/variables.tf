@@ -47,12 +47,12 @@ variable "security_group" {
 #   })
 # }
 
-variable "iam_credentials" {
-  type = object({
-    key = string
-    secret = string
-  })
-}
+# variable "iam_credentials" {
+#   type = object({
+#     key = string
+#     secret = string
+#   })
+# }
 
 #=======================ci/cd=====================================
 variable "pipeline" {
@@ -151,13 +151,13 @@ variable "rds_name" {
     type = string
 }
 
-variable "rds_username" {
-    type = string
-}
+# variable "rds_username" {
+#     type = string
+# }
 
-variable "rds_password" {
-    type = string
-}
+# variable "rds_password" {
+#     type = string
+# }
 
 variable "rds_class" {
     type = string

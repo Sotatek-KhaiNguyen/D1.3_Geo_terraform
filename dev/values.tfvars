@@ -10,10 +10,6 @@ image_tag_mutability = "MUTABLE"
 
 
 #=======================EC2=================================
-iam_credentials = {
-  key = "AKIARQZT7GZLRSQRCIWU"
-  secret = "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"
-}
 ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1HNnCuTxWgUhCPxr5UKm90BH4i4XymHNfNh3eZXSOGkbW+oDvZstBdczUWgcHAExi2nA2NV9Lkgb01h02DUkgL2hIlbMRNd02Y+MBjYUtvLvdIz3hXulOkqxFsAGF/yk2aKOVrd254T7C1xyHxi1XGdVHb1Bc61qagT32aFArAorbzBC5/9XTzhGkMr0pOp0qtxU+y/e+YO/gAAxYTvCPaFJKiFLI3+yCX0C4dA2kny3sGva2/ky7K9nvIS3EeZu8NkY3m2Cq7196EqNPmWvkhLdIktNxplZZOxmItFBkomWsqY6l1Cxw2Bv2n2KfWued7f9ms8MN3/OyGCapnnw7tcgnwULFd+45tMUqh4RaIiCFw9oFg6x9RHCXMzFnIQl74Zc4uS8I4lTcoctsf2BAhylD4wXB94OANBuhJVNLL2Bj9jVm8Gjtjtv4+IfqnI7v8jyP1lBR0SrPvzkDO53WJT6h8QIH1OA++w0upR14D/DW6jKdqpsoWdMr//U0Gmc= tanvn32@tanvn32-MS-7C67"
 vpc_id = "vpc-0f6f1f927ab619182"
 subnet_id = "subnet-00141605612999d66"
@@ -50,8 +46,6 @@ rds_family = "mysql8.0"
 rds_engine = "mysql"
 rds_engine_version = "8.0"
 rds_name = "api"
-rds_username = "root"
-rds_password = "123456"
 rds_class = "db.t3.xlarge"
 rds_strorage = "100"
 

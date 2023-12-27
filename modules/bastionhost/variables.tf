@@ -19,12 +19,12 @@ variable "network" {
   })
 }
 
-variable "iam_credentials" {
-  type = object({
-    key = string
-    secret = string
-  })
-}
+# variable "iam_credentials" {
+#   type = object({
+#     key = string
+#     secret = string
+#   })
+# }
 
 variable "subnet_id" {
   type = string

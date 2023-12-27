@@ -35,7 +35,7 @@ module "ec2" {
   network = local.network
   subnet_id = var.subnet_id
   #security_group = local.security_group
-  iam_credentials = var.iam_credentials
+  #iam_credentials = var.iam_credentials
   ssh_public_key = var.ssh_public_key
 }
 
@@ -73,8 +73,8 @@ module "rds" {
   rds_engine = var.rds_engine
   rds_engine_version = var.rds_engine_version
   rds_name = var.rds_name
-  rds_username = var.rds_username
-  rds_password = var.rds_password
+  # rds_username = var.rds_username
+  # rds_password = var.rds_password
   rds_class = var.rds_class
   rds_strorage = var.rds_strorage
   rds_port = var.rds_port
