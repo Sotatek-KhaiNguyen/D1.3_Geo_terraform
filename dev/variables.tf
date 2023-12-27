@@ -227,3 +227,18 @@ variable "lb_hosted_zone_id" {
     type = string
     default = "zone_id_test"
 }
+
+
+#=======================cf-cdn=========================
+variable "cf_cert_arn" {
+  type = string
+}
+
+variable "cdn_domain" {
+  type = string
+}
+
+#=======================cf-cdn=========================
+variable "cf_static_page_name" {
+  type = string
+}

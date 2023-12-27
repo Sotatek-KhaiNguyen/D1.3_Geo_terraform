@@ -102,3 +102,17 @@ module "hostzone_lb" {
   lb_domain_name = var.lb_domain_name
   lb_hosted_zone_id = var.lb_hosted_zone_id
 }
+
+module "cdn_domain" {
+  source = "../modules/cloudfont/cf-cdn"
+  common = local.common
+  cf_cert_arn = var.cf_cert_arn
+  cdn_domain =  var.cdn_domain
+}
+
+module "cf-static-page" {
+  source = "../modules/cloudfont/cf-static-page"
+  common = local.common
+  cf_static_page_name = var.cf_static_page_name
+  cf_cert_arn = var.cf_cert_arn
+}

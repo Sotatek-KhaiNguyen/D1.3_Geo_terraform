@@ -1,11 +1,44 @@
+resource "aws_s3_bucket" "s3_static_page" {
+    bucket = "${var.common.env}-${var.common.project}-storage"
+}
+
+resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
+    bucket = aws_s3_bucket.s3_static_page.bucket
+    index_document {
+        suffix = "index.html"
+    }
+
+    error_document {
+        key = "error.html"
+    }
+}
+
+resource "aws_s3_bucket_policy" "policy_static_page" {
+  bucket = aws_s3_bucket.s3_static_page.id
+
+  policy = jsonencode({
+    Version = ""
+    Id      = ""
+    Statement = [
+      {
+        Sid       = "AllowPublic"
+        Effect    = "Allow"
+        Principal = "*"
+        Action    = "s3:GetObject"
+        Resource  = "${aws_s3_bucket.s3_static_page.arn}/**"
+      }
+    ]
+  })
+}
+
 resource "aws_cloudfront_origin_access_identity" "cf_oai" {
-  comment = "${var.common.env}-${var.common.project}-${var.name}"
+  comment = "${var.common.env}-${var.common.project}-${var.cf_static_page_name}"
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution" {
     origin {
-        origin_id = "${var.common.env}-${var.common.project}-${var.name}"
-        domain_name = "${var.aws_s3_bucket}-${var.s3_static_page}.bucket_regional_domain_name"
+        origin_id = "${var.common.env}-${var.common.project}-${var.cf_static_page_name}"
+        domain_name = aws_s3_bucket.s3_static_page.bucket_regional_domain_name
         s3_origin_config {
           origin_access_identity = aws_cloudfront_origin_access_identity.cf_oai.cloudfront_access_identity_path
         }
@@ -17,10 +50,11 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
       }
     }
 
+    enabled = true
     default_cache_behavior {
       allowed_methods  = ["GET", "HEAD", "OPTIONS"]
       cached_methods   = ["GET", "HEAD", "OPTIONS"]
-      target_origin_id = "${var.common.env}-${var.common.project}-${var.name}"
+      target_origin_id = "${var.common.env}-${var.common.project}-${var.cf_static_page_name}"
       compress = true
       forwarded_values {
         query_string = false
