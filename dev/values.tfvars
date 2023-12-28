@@ -67,5 +67,30 @@ cf_cert_arn = "arn:aws:acm:us-east-1:104798828119:certificate/52eb723b-c81a-4cb5
 cdn_domain = "cdn.sotatek.com"
 
 
-#=======================cf-cdn=========================
+#=======================cf-static=========================
 cf_static_page_name = "static-page"
+
+#=======================ecs-base===============================
+vpc_id_private = "vpc-0f6f1f927ab619182"
+
+#=======================ecs-scale===============================
+ecs_scale_name = "ugc-ecs"
+container_name = "ugc-container" 
+command = "pwd"
+container_port = "8080"
+desired_count = "2"
+task_cpu = "1 vCPU"
+task_ram = "2 GB"
+min_containers = "3"
+max_containers = "5"
+auto_scaling_target_value_cpu = "2"
+auto_scaling_target_value_ram = "4"
+sg_lb = "default"
+tg_arn = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067"
+# ecs = {
+#   role_auto_scaling = ""
+#   role_execution = ""
+#   role_ecs_service = "" 
+#   ecs_cluster_id = ""
+#   ecs_cluster_name = ""
+# }

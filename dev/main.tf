@@ -21,7 +21,22 @@ locals {
     subnet_id = "${var.subnet_id}"
     security_group = "${var.security_group}"
   }
+
 }
+
+#========================tfstate management========================================
+terraform {
+  backend "s3" {
+    bucket         = "terraform-state-ugc-dev"
+    key            = "dev/terraform.tfstate"
+    region         = "us-east-1"
+  }
+}
+
+
+
+#============================================================================
+
 
 module "ecr" {
   source = "../modules/ecr"
@@ -115,4 +130,36 @@ module "cf-static-page" {
   common = local.common
   cf_static_page_name = var.cf_static_page_name
   cf_cert_arn = var.cf_cert_arn
+}
+
+module "ecs-base" {
+  source = "../modules/ecs/ecs-base"
+  common = local.common
+  vpc_id_private = var.vpc_id_private
+}
+
+module "ecs-scale" {
+  source = "../modules/ecs/ecs-with-scale"
+  common = local.common
+  network = var.network
+  ecs_scale_name = var.ecs_scale_name
+  container_name = var.container_name
+  command = var.command
+  container_port = var.container_port
+  desired_count = var.desired_count
+  task_cpu = var.task_cpu
+  task_ram = var.task_ram
+  min_containers = var.min_containers
+  max_containers = var.max_containers
+  auto_scaling_target_value_cpu = var.auto_scaling_target_value_cpu
+  auto_scaling_target_value_ram = var.auto_scaling_target_value_ram
+  sg_lb = var.sg_lb
+  tg_arn = var.tg_arn
+  ecs = {
+    role_auto_scaling = module.ecs-base.role_auto_scaling
+    role_execution = module.ecs-base.role_execution
+    role_ecs_service = module.ecs-base.role_ecs_service
+    ecs_cluster_id = module.ecs-base.ecs_cluster_id
+    ecs_cluster_name = module.ecs-base.ecs_cluster_name
+  }
 }
