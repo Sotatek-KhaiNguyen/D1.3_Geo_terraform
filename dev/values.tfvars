@@ -10,10 +10,10 @@ image_tag_mutability = "MUTABLE"
 
 
 #=======================EC2=================================
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1HNnCuTxWgUhCPxr5UKm90BH4i4XymHNfNh3eZXSOGkbW+oDvZstBdczUWgcHAExi2nA2NV9Lkgb01h02DUkgL2hIlbMRNd02Y+MBjYUtvLvdIz3hXulOkqxFsAGF/yk2aKOVrd254T7C1xyHxi1XGdVHb1Bc61qagT32aFArAorbzBC5/9XTzhGkMr0pOp0qtxU+y/e+YO/gAAxYTvCPaFJKiFLI3+yCX0C4dA2kny3sGva2/ky7K9nvIS3EeZu8NkY3m2Cq7196EqNPmWvkhLdIktNxplZZOxmItFBkomWsqY6l1Cxw2Bv2n2KfWued7f9ms8MN3/OyGCapnnw7tcgnwULFd+45tMUqh4RaIiCFw9oFg6x9RHCXMzFnIQl74Zc4uS8I4lTcoctsf2BAhylD4wXB94OANBuhJVNLL2Bj9jVm8Gjtjtv4+IfqnI7v8jyP1lBR0SrPvzkDO53WJT6h8QIH1OA++w0upR14D/DW6jKdqpsoWdMr//U0Gmc= tanvn32@tanvn32-MS-7C67"
-vpc_id = "vpc-0f6f1f927ab619182"
-subnet_id = "subnet-00141605612999d66"
-security_group = "default"
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3HN1YSS1zIQ01goxSEwpgfq5rhqJy0RKKhwrL8aD/fK4z9XpXOyQFkiyoSfbdAxD8LRZJNoZtRINRjN1G1pQ9xSzWYGrM0SjtBW/sQw2v40Pdn8Tda4dHf3EVOWISUboRjpOR9eZuhmHKqgjO8u+TRUHOUCuFxjEypwu0YTI7rg8nro9GrOqmR/Ayyw6v3hYyltbS+gij7GWXVwb89HznaGfM3jU6xU7SVxlcxVpCpjB9+x5sXILBu3scCcUvMM3NPzMSmLwnfQtETE8A7kRuWW+MrGBUFH7rXN1zoYLqCUIUEk+DSMxlZ8gc6hBlViDmUKxfdz8HkTiGHVE+rrJYz7M32gaG/Ukk9BunEIU/oYE1XxIjhXOszEm9MP3uWk1fywcY8y4QE328vAOLkUJVte5CyC6aUOTvOV9uImsbCdwB359QSK7c+pSLTc1eSyQSZasbNLpJrTFVyE4eWgaA07lGTlPKoxMaPF7idw2MWuzvGUMpC7i3+psLvMtksqU="
+#vpc_id = "vpc-0f6f1f927ab619182"
+#subnet_id = "subnet-00141605612999d66"
+#security_group = "default"
 
 
 #=======================ci/cd=====================================
@@ -63,7 +63,7 @@ lb_hosted_zone_id = "zone_id_test"
 
 
 #=======================cf-cdn=========================
-cf_cert_arn = "arn:aws:acm:us-east-1:104798828119:certificate/52eb723b-c81a-4cb5-9baf-2418c84599bb"
+cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/5b3ca05e-1649-4480-a188-30121a6b12ce"
 cdn_domain = "cdn.sotatek.com"
 
 
@@ -94,3 +94,14 @@ tg_arn = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-tar
 #   ecs_cluster_id = ""
 #   ecs_cluster_name = ""
 # }
+
+#========================VPC=====================================
+vpc_cidr = "172.16.0.0/16"
+public_subnet_numbers = {
+  "us-east-1a" = 1
+  "us-east-1c" = 2
+}
+private_subnet_numbers = {
+  "us-east-1a" = 4
+  "us-east-1c" = 5
+}

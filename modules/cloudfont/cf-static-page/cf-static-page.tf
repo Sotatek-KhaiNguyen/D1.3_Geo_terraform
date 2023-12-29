@@ -2,23 +2,23 @@ resource "aws_s3_bucket" "s3_static_page" {
     bucket = "${var.common.env}-${var.common.project}-storage"
 }
 
-resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
-    bucket = aws_s3_bucket.s3_static_page.bucket
-    index_document {
-        suffix = "index.html"
-    }
+# resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
+#     bucket = aws_s3_bucket.s3_static_page.bucket
+#     index_document {
+#         suffix = "index.html"
+#     }
 
-    error_document {
-        key = "error.html"
-    }
-}
+#     error_document {
+#         key = "error.html"
+#     }
+# }
 
 resource "aws_s3_bucket_policy" "policy_static_page" {
   bucket = aws_s3_bucket.s3_static_page.id
 
   policy = jsonencode({
-    Version = ""
-    Id      = ""
+    # Version = ""
+    # Id      = ""
     Statement = [
       {
         Sid       = "AllowPublic"

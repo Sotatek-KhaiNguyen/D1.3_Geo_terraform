@@ -11,13 +11,13 @@ variable "ssh_public_key" {
     type = string
 }
 
-variable "network" {
-  type = object({
-    vpc_id = string
-    subnet_id = string
-    security_group = string
-  })
-}
+# variable "network" {
+#   type = object({
+#     vpc_id = string
+#     subnet_id = string
+#     security_group = string
+#   })
+# }
 
 # variable "iam_credentials" {
 #   type = object({
@@ -27,5 +27,9 @@ variable "network" {
 # }
 
 variable "subnet_id" {
+  type = string
+}
+
+variable "vpc_id" {
   type = string
 }

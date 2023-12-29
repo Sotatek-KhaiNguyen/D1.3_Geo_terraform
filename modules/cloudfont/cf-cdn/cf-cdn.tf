@@ -2,15 +2,15 @@ resource "aws_s3_bucket" "s3_storage" {
   bucket = "${var.common.env}-${var.common.project}-storage"
 }
 
-resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
-  bucket = aws_s3_bucket.s3_storage.bucket
-  index_document {
-    suffix = "index.html"
-  }
-  error_document {
-    key = "index.html"
-  }
-}
+# resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
+#   bucket = aws_s3_bucket.s3_storage.bucket
+#   index_document {
+#     suffix = "index.html"
+#   }
+#   error_document {
+#     key = "index.html"
+#   }
+# }
 
 data "aws_iam_policy_document" "policy_doc_storage" {
   statement {
