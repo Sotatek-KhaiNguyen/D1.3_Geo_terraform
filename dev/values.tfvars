@@ -29,25 +29,25 @@ role_codebuild = "arn:aws:iam::115228050885:role/test"
 
 
 #=======================redis cache=====================================
-network = {
-  vpc_id_private = "vpc-0f6f1f927ab619182"
-  subnet_ids = ["subnet-0c0000e20a986bf14", "subnet-0338bced2e9f2a40b	"]
-  sg_container = "default"
-}
+# network = {
+#   vpc_id_private = "vpc-0f6f1f927ab619182"
+#   subnet_ids = ["subnet-0c0000e20a986bf14", "subnet-0338bced2e9f2a40b	"]
+#   sg_container = "default"
+# }
 redis_engine_version = "redis"
 num_cache_nodes = "1"
 node_type = "cache.t4g.medium"
-port = "6379"
+ports = ["6379", "22"]
 
 
 #=======================rds=====================================
 rds_port = "3306"
 rds_family = "mysql8.0"
 rds_engine = "mysql"
-rds_engine_version = "8.0"
+rds_engine_version = "8.0.35"
 rds_name = "api"
-rds_class = "db.t3.xlarge"
-rds_strorage = "100"
+rds_class = "db.t3.micro"
+rds_strorage = "10"
 
 
 #========================route53cdn=================

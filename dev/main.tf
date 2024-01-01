@@ -54,10 +54,6 @@ module "vpc" {
 module "ec2" {
   source = "../modules/bastionhost"
   common = local.common
-  # network = local.network
-  #subnet_id = var.subnet_id
-  #security_group = local.security_group
-  #iam_credentials = var.iam_credentials
   ssh_public_key = var.ssh_public_key
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.public_subnet_ids[0]
@@ -80,29 +76,34 @@ module "ec2" {
 #   role_codebuild = var.role_codebuild
 # }
 
-# module "redis" {
-#   source = "../modules/cache"
-#   common = local.common
-#   network = var.network
-#   redis_engine_version = var.redis_engine_version
-#   num_cache_nodes = var.num_cache_nodes
-#   node_type = var.node_type
-#   port = var.port
-# }
+module "redis" {
+  source = "../modules/cache"
+  common = local.common
+  #network = var.network
+  redis_engine_version = var.redis_engine_version
+  num_cache_nodes = var.num_cache_nodes
+  node_type = var.node_type
+  ports = var.ports
+  network = {
+    vpc_id = module.vpc.vpc_id
+    subnet_ids = [module.vpc.private_subnet_ids[0]]
+  }
+}
 
 # module "rds" {
 #   source = "../modules/database"
 #   common = local.common
-#   network = var.network
 #   rds_engine = var.rds_engine
 #   rds_engine_version = var.rds_engine_version
 #   rds_name = var.rds_name
-#   # rds_username = var.rds_username
-#   # rds_password = var.rds_password
 #   rds_class = var.rds_class
 #   rds_strorage = var.rds_strorage
 #   rds_port = var.rds_port
 #   rds_family = var.rds_family
+#   network = {
+#     vpc_id = module.vpc.vpc_id
+#     subnet_ids = module.vpc.private_subnet_ids
+#   }
 # }
 
 # module "natgateway" {

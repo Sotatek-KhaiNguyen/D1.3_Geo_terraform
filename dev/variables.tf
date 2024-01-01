@@ -93,13 +93,13 @@ variable "role_codebuild" {
 }
 
 #=======================redis cache=====================================
-variable "network" {
-  type = object({
-    vpc_id_private = string
-    subnet_ids = list(string)
-    sg_container = string
-  })
-}
+# variable "network" {
+#   type = object({
+#     vpc_id_private = string
+#     subnet_ids = list(string)
+#     sg_container = string
+#   })
+# }
 
 # variable "subnet_ids" {
 #     type = list(string)
@@ -122,8 +122,12 @@ variable "node_type" {
   type = string
 }
 
-variable "port" {
-  type = string
+# variable "port" {
+#   type = string
+# }
+
+variable "ports" {
+  type = list(string)
 }
 
 #=======================rds=====================================
@@ -147,14 +151,6 @@ variable "rds_name" {
     type = string
 }
 
-# variable "rds_username" {
-#     type = string
-# }
-
-# variable "rds_password" {
-#     type = string
-# }
-
 variable "rds_class" {
     type = string
 }
@@ -162,6 +158,33 @@ variable "rds_class" {
 variable "rds_strorage" {
     type = string
 }
+
+# variable "sg_ingress_rules" {
+#     type = list(object({
+#       from_port   = number
+#       to_port     = number
+#       protocol    = string
+#       cidr_block  = string
+#       description = string
+#     }))
+#     default     = [
+#         {
+#           from_port   = 22
+#           to_port     = 22
+#           protocol    = "tcp"
+#           cidr_block  = "0.0.0.0/0"
+#           description = "test"
+#         },
+#         {
+#           from_port   = 3306
+#           to_port     = 3306
+#           protocol    = "tcp"
+#           cidr_block  = "0.0.0.0/0"
+#           description = "test"
+#         },
+#     ]
+# }
+
 
 #========================route53cdn=================
 variable "hosted_zone_public_id" {

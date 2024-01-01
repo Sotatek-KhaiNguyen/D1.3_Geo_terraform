@@ -17,31 +17,48 @@ resource "aws_db_instance" "db" {
   maintenance_window = "sat:04:30-sat:05:30"
 }
 
+// information for secret manager
 data "aws_secretsmanager_secret" "ugc_secret_dev" {
   name = "ugc_secret_dev"
 }
 
+// get data of secret manager
 data "aws_secretsmanager_secret_version" "ugc_secret_version" {
   secret_id = data.aws_secretsmanager_secret.ugc_secret_dev.id
 }
 
-resource "aws_security_group_rule" "sg_rule_redis" {
+# resource "aws_security_group_rule" "sg_rule_rds" {
+#   count = length(var.sg_rule_rds)
+#   type = "ingress"
+#   from_port = var.sg_rule_rds[count.index].from_port
+#   to_port = var.sg_rule_rds[count.index].to_port
+#   protocol = var.sg_rule_rds[count.index].protocol
+#   cidr_blocks = [var.sg_rule_rds[count.index].cidr_block]
+#   description = var.sg_rule_rds[count.index].description
+#   #source_security_group_id = var.network.sg_container
+#   security_group_id = aws_security_group.sg_db.id
+# }
+
+
+resource "aws_security_group_rule" "sg_rule_rds" {
   type = "ingress"
-  from_port = var.rds_port
-  to_port = var.rds_port
+  from_port = var.port
+  to_port = var.port
   protocol = "TCP"
-  source_security_group_id = var.network.sg_container
+  cidr_blocks = ["0.0.0.0/0"]
+  #source_security_group_id = var.network.sg_container
   security_group_id = aws_security_group.sg_db.id
 }
 
 resource "aws_security_group" "sg_db" {
-    name = "${var.common.env}-${var.common.project}-${var.rds_name}-sg"
-    vpc_id = var.network.vpc_id_private
-    egress {
-      from_port   = 0
-      to_port     = 0
-      protocol    = "-1"
-      cidr_blocks = ["0.0.0.0/0"]
+  name = "${var.common.env}-${var.common.project}-${var.rds_name}-sg"
+  vpc_id = var.network.vpc_id
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 

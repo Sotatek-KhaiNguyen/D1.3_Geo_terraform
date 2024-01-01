@@ -19,14 +19,6 @@ variable "rds_name" {
     type = string
 }
 
-# variable "rds_username" {
-#     type = string
-# }
-
-# variable "rds_password" {
-#     type = string
-# }
-
 variable "rds_class" {
     type = string
 }
@@ -37,12 +29,20 @@ variable "rds_strorage" {
 
 variable "network" {
     type = object({
-        vpc_id_private = string
+        vpc_id = string
         subnet_ids = list(string)
-        sg_container = string
+        #sg_container = string
     })
 }
 
+variable "sg_ingress_rules" {
+    type = list(object({
+      from_port   = number
+      to_port     = number
+      protocol    = string
+      cidr_block  = string
+    }))
+}   
 
 
 variable "rds_port" {
