@@ -159,33 +159,6 @@ variable "rds_strorage" {
     type = string
 }
 
-# variable "sg_ingress_rules" {
-#     type = list(object({
-#       from_port   = number
-#       to_port     = number
-#       protocol    = string
-#       cidr_block  = string
-#       description = string
-#     }))
-#     default     = [
-#         {
-#           from_port   = 22
-#           to_port     = 22
-#           protocol    = "tcp"
-#           cidr_block  = "0.0.0.0/0"
-#           description = "test"
-#         },
-#         {
-#           from_port   = 3306
-#           to_port     = 3306
-#           protocol    = "tcp"
-#           cidr_block  = "0.0.0.0/0"
-#           description = "test"
-#         },
-#     ]
-# }
-
-
 #========================route53cdn=================
 variable "hosted_zone_public_id" {
     type = string

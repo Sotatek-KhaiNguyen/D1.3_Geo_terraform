@@ -27,23 +27,10 @@ data "aws_secretsmanager_secret_version" "ugc_secret_version" {
   secret_id = data.aws_secretsmanager_secret.ugc_secret_dev.id
 }
 
-# resource "aws_security_group_rule" "sg_rule_rds" {
-#   count = length(var.sg_rule_rds)
-#   type = "ingress"
-#   from_port = var.sg_rule_rds[count.index].from_port
-#   to_port = var.sg_rule_rds[count.index].to_port
-#   protocol = var.sg_rule_rds[count.index].protocol
-#   cidr_blocks = [var.sg_rule_rds[count.index].cidr_block]
-#   description = var.sg_rule_rds[count.index].description
-#   #source_security_group_id = var.network.sg_container
-#   security_group_id = aws_security_group.sg_db.id
-# }
-
-
 resource "aws_security_group_rule" "sg_rule_rds" {
   type = "ingress"
-  from_port = var.port
-  to_port = var.port
+  from_port = var.rds_port
+  to_port = var.rds_port
   protocol = "TCP"
   cidr_blocks = ["0.0.0.0/0"]
   #source_security_group_id = var.network.sg_container

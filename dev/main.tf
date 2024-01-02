@@ -90,21 +90,21 @@ module "redis" {
   }
 }
 
-# module "rds" {
-#   source = "../modules/database"
-#   common = local.common
-#   rds_engine = var.rds_engine
-#   rds_engine_version = var.rds_engine_version
-#   rds_name = var.rds_name
-#   rds_class = var.rds_class
-#   rds_strorage = var.rds_strorage
-#   rds_port = var.rds_port
-#   rds_family = var.rds_family
-#   network = {
-#     vpc_id = module.vpc.vpc_id
-#     subnet_ids = module.vpc.private_subnet_ids
-#   }
-# }
+module "rds" {
+  source = "../modules/database"
+  common = local.common
+  rds_engine = var.rds_engine
+  rds_engine_version = var.rds_engine_version
+  rds_name = var.rds_name
+  rds_class = var.rds_class
+  rds_strorage = var.rds_strorage
+  rds_port = var.rds_port
+  rds_family = var.rds_family
+  network = {
+    vpc_id = module.vpc.vpc_id
+    subnet_ids = module.vpc.private_subnet_ids
+  }
+}
 
 # module "natgateway" {
 #   source = "../modules/natgateway"

@@ -33,17 +33,7 @@ variable "network" {
         subnet_ids = list(string)
         #sg_container = string
     })
-}
-
-variable "sg_ingress_rules" {
-    type = list(object({
-      from_port   = number
-      to_port     = number
-      protocol    = string
-      cidr_block  = string
-    }))
-}   
-
+} 
 
 variable "rds_port" {
   type = string
