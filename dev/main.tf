@@ -9,8 +9,18 @@ terraform {
   } 
 }
 
+// information for secret manager
+data "aws_secretsmanager_secret" "ugc_secret_dev" {
+  name = "ugc_secret_dev"
+}
+
+// get data of secret manager
+data "aws_secretsmanager_secret_version" "ugc_secret_version" {
+  secret_id = data.aws_secretsmanager_secret.ugc_secret_dev.id
+}
+
 provider "github" {
-  token = var.OAuthToken
+  token = jsondecode(data.aws_secretsmanager_secret_version.ugc_secret_version.secret_string)["OAuthToken"]
   owner = "sotatek-dev"
 }
 
@@ -185,17 +195,17 @@ module "pipelinebase" {
 }
 
 
-module "codepipeline_api" {
+module "codepipeline" {
   for_each = { for github in var.github_repos : github["name"] => github }
 
-  source = "../modules/pipeline-api"
+  source = "../modules/pipeline"
   common = local.common
   #github_repos           = var.github_frontend_repos
   github_repos           = var.github_repos
   codebuild_image        = var.codebuild_image
   codebuild_compute_type = var.codebuild_compute_type
   codebuild_buildspec    = var.codebuild_buildspec
-  OAuthToken             = var.OAuthToken
+  #OAuthToken             = var.OAuthToken
   bucketName             = module.pipelinebase.s3_bucket
   codepipelineRoleArn    = module.pipelinebase.codepipeline_role_arn
   gitBranch              = each.value.branch

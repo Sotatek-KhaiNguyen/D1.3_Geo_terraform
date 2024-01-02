@@ -40,7 +40,7 @@ resource "aws_iam_role" "lambda_role" {
 }
 data "archive_file" "zipit" {
   type        = "zip"
-  source_file = "./modules/pipelinebase/lambda.py"
+  source_file = "../modules/pipelinebase/lambda.py"
   output_path = "${var.common.project}-${var.common.env}-lambda-${random_string.r.result}.zip"
 }
 resource "random_string" "r" {

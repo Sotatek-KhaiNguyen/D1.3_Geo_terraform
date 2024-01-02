@@ -287,7 +287,7 @@ variable "private_subnet_numbers" {
 #========================CICD===================================
 variable "codebuild_image" {}
 variable "codebuild_compute_type" {}
-variable "OAuthToken" {}
+#variable "OAuthToken" {}
 variable "codebuild_buildspec" {}
 variable "github_repos" {}
 #variable "job_services" {}

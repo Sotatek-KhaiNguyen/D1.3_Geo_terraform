@@ -109,7 +109,7 @@ private_subnet_numbers = {
 #=======================CICD====================================
 codebuild_image = "BUILD_GENERAL1_SMALL"
 codebuild_compute_type = "aws/codebuild/standard:5.0"
-OAuthToken = "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"
+#OAuthToken = "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"
 codebuild_buildspec = "devops/buildspec.yml"
 github_repos = [
   { name = "testingnewpipeline", branch="main", organization="sotatek-dev" }
