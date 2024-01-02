@@ -283,3 +283,13 @@ variable "private_subnet_numbers" {
   type = map(number)
   description = "Map of AZ to a number that should be used for private subnets"
 }
+
+#========================CICD===================================
+variable "codebuild_image" {}
+variable "codebuild_compute_type" {}
+variable "OAuthToken" {}
+variable "codebuild_buildspec" {}
+variable "github_repos" {}
+#variable "job_services" {}
+#variable "github_frontend_repos" {}
+#variable "github_api_repos" {}

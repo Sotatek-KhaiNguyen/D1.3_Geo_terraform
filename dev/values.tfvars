@@ -105,3 +105,12 @@ private_subnet_numbers = {
   "us-east-1a" = 4
   "us-east-1c" = 5
 }
+
+#=======================CICD====================================
+codebuild_image = "BUILD_GENERAL1_SMALL"
+codebuild_compute_type = "aws/codebuild/standard:5.0"
+OAuthToken = "github_pat_123456"
+codebuild_buildspec = "devops/buildspec.yml"
+github_repos = [
+  { name = "test-cicd", branch="develop", organization="sotatek-dev" }
+]
