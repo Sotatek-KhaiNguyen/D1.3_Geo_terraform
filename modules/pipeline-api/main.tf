@@ -77,7 +77,7 @@ resource "aws_codepipeline" "codepipeline" {
       configuration = {
         DeploymentTimeout = "20"
         ClusterName       = "${var.common.env}-${var.common.project}"
-        ServiceName       = "${var.common.env}-${var.common.project}-api"
+        ServiceName       = "${var.common.env}-${var.common.project}"
         FileName          = "artifact.json"
       }
     }

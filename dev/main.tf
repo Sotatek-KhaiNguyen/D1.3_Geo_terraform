@@ -9,6 +9,11 @@ terraform {
   } 
 }
 
+provider "github" {
+  token = var.OAuthToken
+  owner = "sotatek-dev"
+}
+
 locals {
   common = {
     project = "${var.project}"
