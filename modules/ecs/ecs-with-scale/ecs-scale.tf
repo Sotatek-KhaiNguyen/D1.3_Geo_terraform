@@ -3,9 +3,9 @@
 ####  ECS role - task definitions - servivices #########
 ########################################################
 resource "aws_security_group" "sg_service" {
-  name        = "${var.common.env}-${var.common.project}-sg-${var.ecs_scale_name}"
-  description = "SG for ${var.ecs_scale_name} group"
-  vpc_id      = var.network.vpc_id_private
+  name        = "${var.common.env}-${var.common.project}-sg-${var.service_name}"
+  description = "SG for ${var.service_name} group"
+  vpc_id      = var.network.vpc_id
 
   egress {
     from_port   = 0
@@ -28,12 +28,12 @@ resource "aws_security_group_rule" "sg_rule_service" {
 
 ### ECS SERVICE ###
 resource "aws_cloudwatch_log_group" "log_group" {
-  name = "ecs/${var.common.env}-${var.common.project}-${var.ecs_scale_name}"
+  name = "ecs/${var.common.env}-${var.common.project}-${var.service_name}"
   retention_in_days = 7
 }
 
 resource "aws_ecs_task_definition" "task_definition" {
-  family = "${var.common.env}-${var.common.project}-${var.ecs_scale_name}"
+  family = "${var.common.env}-${var.common.project}-${var.service_name}"
   network_mode = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn = var.ecs.role_execution
@@ -55,7 +55,7 @@ resource "aws_ecs_task_definition" "task_definition" {
           "logDriver": "awslogs",
           "options": {
             "awslogs-region": "${var.common.region}",
-            "awslogs-group": "ecs/${var.common.env}-${var.common.project}-${var.ecs_scale_name}",
+            "awslogs-group": "ecs/${var.common.env}-${var.common.project}-${var.service_name}",
             "awslogs-stream-prefix": "ecs"
           }
         }
@@ -67,7 +67,7 @@ resource "aws_ecs_task_definition" "task_definition" {
 }
 
 resource "aws_ecs_service" "ecs_sercive" {
-  name = "${var.common.env}-${var.common.project}-${var.ecs_scale_name}"
+  name = "${var.common.env}-${var.common.project}-${var.service_name}"
   cluster = var.ecs.ecs_cluster_id
   task_definition = aws_ecs_task_definition.task_definition.arn
   lifecycle {
@@ -82,13 +82,13 @@ resource "aws_ecs_service" "ecs_sercive" {
   network_configuration {
     assign_public_ip = false
     subnets = var.network.subnet_ids
-    security_groups = [aws_security_group.sg_service.id, var.network.sg_container]
+    security_groups = [aws_security_group.sg_service.id]
   }
 
   load_balancer {
     target_group_arn = var.tg_arn
     container_port = var.container_port
-    container_name = var.ecs_scale_name
+    container_name = var.container_name
   }
 
   # depends_on = [aws_lb_listener_rule.lb_listener_rule]
@@ -107,7 +107,7 @@ resource "aws_appautoscaling_target" "ecs_target" {
 }
 
 resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
-  name = "${var.common.env}-${var.common.project}-AutoScalingPolicyCPU-for-${var.ecs_scale_name}"
+  name = "${var.common.env}-${var.common.project}-AutoScalingPolicyCPU-for-${var.service_name}"
   policy_type = "TargetTrackingScaling"
   resource_id = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
@@ -124,7 +124,7 @@ resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
 }
 
 resource "aws_appautoscaling_policy" "ecs_policy_ram" {
-  name = "${var.common.env}-${var.common.project}-AutoScalingPolicyRAM-for-${var.ecs_scale_name}"
+  name = "${var.common.env}-${var.common.project}-AutoScalingPolicyRAM-for-${var.service_name}"
   policy_type = "TargetTrackingScaling"
   resource_id = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension

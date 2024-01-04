@@ -1,25 +1,26 @@
 resource "aws_lb" "lb" {
     name = "${var.common.env}-${var.common.project}-lb" // name of lb resource
-    internal = true // loadbalancer inside vpc
+    internal = false // loadbalancer inside vpc
     load_balancer_type = "application"
-    subnets = var.subnet_ids
+    subnets = var.network.subnet_ids
+    security_groups = [aws_security_group.sg_lb.id]
 }
 
 resource "aws_security_group" "sg_lb" {
     name = "${var.common.env}-${var.common.project}-sg-lb"
-    vpc_id = var.vpc_id
+    vpc_id = var.network.vpc_id
 
     ingress {
         from_port = 80
         to_port = 80
-        protocol "TCP"
+        protocol = "TCP"
         cidr_blocks = ["0.0.0.0/0"] // allow every one access to 
     }
 
     ingress {
         from_port = 443
         to_port = 443
-        protocol "TCP"
+        protocol = "TCP"
         cidr_blocks = ["0.0.0.0/0"] // allow every one access to 
     }
 
@@ -35,10 +36,9 @@ resource "aws_lb_listener" "lb_listener_http" {
     load_balancer_arn = aws_lb.lb.arn
     port = "80"
     protocol = "HTTP"
-
     default_action {
-        type = "redrect"
-        redrect {
+        type = "redirect"
+        redirect {
             protocol = "HTTPS"
             port = "443"
             status_code = "HTTP_301"   
@@ -50,6 +50,7 @@ resource "aws_lb_listener" "lb_listener_https" {
     load_balancer_arn = aws_lb.lb.arn
     port = "443"
     protocol = "HTTPS"
+    certificate_arn = var.dns_cert_arn
     default_action {
         type = "fixed-response"
         fixed_response {

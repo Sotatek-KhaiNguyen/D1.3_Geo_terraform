@@ -7,7 +7,7 @@ variable "common" {
   })
 }
 
-variable "ecs_scale_name" {
+variable "service_name" {
   type = string
 }
 
@@ -71,8 +71,10 @@ variable "ecs" {
 
 variable "network" {
   type = object({
-    vpc_id_private = string
+    vpc_id = string
     subnet_ids = list(string)
-    sg_container = string
+    #sg_container = string
   })
 }
+
+variable "ecs_service" {}

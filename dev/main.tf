@@ -60,11 +60,11 @@ module "vpc" {
   private_subnet_numbers = var.private_subnet_numbers
 }
 
-# module "ecr" {
-#   source = "../modules/ecr"
-#   common = local.common
-#   image_tag_mutability = var.image_tag_mutability
-# }
+module "ecr" {
+  source = "../modules/ecr"
+  common = local.common
+  image_tag_mutability = var.image_tag_mutability
+}
 
 module "ec2" {
   source = "../modules/bastionhost"
@@ -157,16 +157,42 @@ module "rds" {
 #   cf_cert_arn = var.cf_cert_arn
 # }
 
-# module "ecs-base" {
-#   source = "../modules/ecs/ecs-base"
-#   common = local.common
-#   vpc_id_private = var.vpc_id_private
-# }
+module "alb" {
+  source = "../modules/loadbalancer/alb"
+  common = local.common
+  network = {
+    vpc_id = module.vpc.vpc_id
+    subnet_ids = module.vpc.public_subnet_ids
+  }
+  dns_cert_arn = var.dns_cert_arn
+}
 
-# module "ecs-scale" {
+module "target_group" {
+  source = "../modules/loadbalancer/target_group"
+  common = local.common
+  health_check_path = var.health_check_path
+  network = {
+    vpc_id = module.vpc.vpc_id
+  }
+  # container_port = "80"
+  host_header = var.host_header
+  aws_lb_listener_arn = module.alb.aws_lb_listener_arn
+  priority = var.priority
+}
+
+
+
+module "ecs_base" {
+  source = "../modules/ecs/ecs-base"
+  common = local.common
+  network = {
+    vpc_id = module.vpc.vpc_id
+  }
+}
+
+# module "ecs_scale" {
 #   source = "../modules/ecs/ecs-with-scale"
 #   common = local.common
-#   network = var.network
 #   ecs_scale_name = var.ecs_scale_name
 #   container_name = var.container_name
 #   command = var.command
@@ -178,16 +204,52 @@ module "rds" {
 #   max_containers = var.max_containers
 #   auto_scaling_target_value_cpu = var.auto_scaling_target_value_cpu
 #   auto_scaling_target_value_ram = var.auto_scaling_target_value_ram
-#   sg_lb = var.sg_lb
-#   tg_arn = var.tg_arn
+#   sg_lb = module.alb.sg_lb
+#   tg_arn = module.target_group.tg_arn
 #   ecs = {
-#     role_auto_scaling = module.ecs-base.role_auto_scaling
-#     role_execution = module.ecs-base.role_execution
-#     role_ecs_service = module.ecs-base.role_ecs_service
-#     ecs_cluster_id = module.ecs-base.ecs_cluster_id
-#     ecs_cluster_name = module.ecs-base.ecs_cluster_name
+#     role_auto_scaling = module.ecs_base.role_auto_scaling
+#     role_execution = module.ecs_base.role_execution
+#     role_ecs_service = module.ecs_base.role_ecs_service
+#     ecs_cluster_id = module.ecs_base.ecs_cluster_id
+#     ecs_cluster_name = module.ecs_base.ecs_cluster_name
+#   }
+#   network = {
+#     vpc_id = module.vpc.vpc_id
+#     subnet_ids = [module.vpc.private_subnet_ids[0]]
 #   }
 # }
+
+module "ecs_scale" {
+  for_each = { for service in var.ecs_service : service["service_name"] => service }
+  source = "../modules/ecs/ecs-with-scale"
+  ecs_service = var.ecs_service
+  common = local.common
+  service_name = each.value.service_name
+  container_name = each.value.container_name
+  command = each.value.command
+  container_port = each.value.container_port
+  desired_count = each.value.desired_count
+  task_cpu = each.value.task_cpu
+  task_ram = each.value.task_ram
+  min_containers = each.value.min_containers
+  max_containers = each.value.max_containers
+  auto_scaling_target_value_cpu = each.value.auto_scaling_target_value_cpu
+  auto_scaling_target_value_ram = each.value.auto_scaling_target_value_ram
+  sg_lb = module.alb.sg_lb
+  tg_arn = module.target_group.tg_arn
+  ecs = {
+    role_auto_scaling = module.ecs_base.role_auto_scaling
+    role_execution = module.ecs_base.role_execution
+    role_ecs_service = module.ecs_base.role_ecs_service
+    ecs_cluster_id = module.ecs_base.ecs_cluster_id
+    ecs_cluster_name = module.ecs_base.ecs_cluster_name
+  }
+  network = {
+    vpc_id = module.vpc.vpc_id
+    subnet_ids = [module.vpc.private_subnet_ids[0]]
+  }
+}
+
 
 module "pipelinebase" {
   source = "../modules/pipelinebase"

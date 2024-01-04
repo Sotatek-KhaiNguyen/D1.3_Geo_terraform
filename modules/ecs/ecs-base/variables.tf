@@ -7,6 +7,8 @@ variable "common" {
   })
 }
 
-variable "vpc_id_private" {
-  type = string
+variable "network" {
+  type = object({
+    vpc_id = string
+  })
 }

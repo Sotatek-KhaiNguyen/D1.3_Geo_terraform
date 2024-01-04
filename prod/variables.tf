@@ -12,7 +12,7 @@ variable "env" {
 
 variable "region" {
   type = string
-  default = "ap-southeast-1"
+  default = "us-east-1"
   description = "ap-southeast-1"
 }
 

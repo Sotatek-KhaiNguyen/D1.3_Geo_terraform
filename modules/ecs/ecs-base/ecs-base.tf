@@ -1,7 +1,7 @@
 resource "aws_security_group" "sg_ecs_task" {
   name        = "${var.common.env}-${var.common.project}-ecs-task"
   description = "SG default for ECS Tasks"
-  vpc_id      = var.vpc_id_private
+  vpc_id      = var.network.vpc_id
 
   egress {
     from_port   = 0

@@ -1,7 +1,7 @@
 #=================common=======================
 project = "geotechnologies-ugc-app"
 env = "dev"
-region = "ap-southeast-1"
+region = "us-east-1"
 account_id = "115228050885"
 
 #=================ECR=========================
@@ -52,7 +52,7 @@ rds_strorage = "10"
 
 #========================route53cdn=================
 hosted_zone_public_id = "test"
-domain_name = "test.sotatek.com"
+domain_name = "khai.devops.donnytran.com"
 cf_s3_domain_name = "s3.sotatek.com"
 cf_s3_hosted_zone_id = "zone_id_test"
 
@@ -63,7 +63,7 @@ lb_hosted_zone_id = "zone_id_test"
 
 
 #=======================cf-cdn=========================
-cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/5b3ca05e-1649-4480-a188-30121a6b12ce"
+cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/0c9c7e80-e373-4089-9087-857adaa5ab9e"
 cdn_domain = "cdn.sotatek.com"
 
 
@@ -71,22 +71,22 @@ cdn_domain = "cdn.sotatek.com"
 cf_static_page_name = "static-page"
 
 #=======================ecs-base===============================
-vpc_id_private = "vpc-0f6f1f927ab619182"
+#vpc_id_private = "vpc-0f6f1f927ab619182"
 
 #=======================ecs-scale===============================
-ecs_scale_name = "ugc-ecs"
-container_name = "ugc-container" 
-command = "pwd"
-container_port = "8080"
-desired_count = "2"
-task_cpu = "1 vCPU"
-task_ram = "2 GB"
-min_containers = "3"
-max_containers = "5"
-auto_scaling_target_value_cpu = "2"
-auto_scaling_target_value_ram = "4"
-sg_lb = "default"
-tg_arn = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067"
+# ecs_scale_name = "ugc-ecs"
+# container_name = "ugc-container" 
+# command = "pwd"
+# container_port = "80"
+# desired_count = "2"
+# task_cpu = "512"
+# task_ram = "2048"
+# min_containers = "3"
+# max_containers = "5"
+# auto_scaling_target_value_cpu = "2"
+# auto_scaling_target_value_ram = "4"
+#sg_lb = "default"
+#tg_arn = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-targets/73e2d6bc24d8a067"
 # ecs = {
 #   role_auto_scaling = ""
 #   role_execution = ""
@@ -94,6 +94,21 @@ tg_arn = "arn:aws:elasticloadbalancing:us-west-2:123456789012:targetgroup/my-tar
 #   ecs_cluster_id = ""
 #   ecs_cluster_name = ""
 # }
+ecs_service = [
+  {
+    service_name = "api"
+    container_name = "ugc-container" 
+    command = "pwd"
+    container_port = "80"
+    desired_count = "1"
+    task_cpu = "512"
+    task_ram = "2048"
+    min_containers = "1"
+    max_containers = "3"
+    auto_scaling_target_value_cpu = "2"
+    auto_scaling_target_value_ram = "4"
+  }
+]
 
 #========================VPC=====================================
 vpc_cidr = "172.16.0.0/16"
@@ -114,3 +129,11 @@ codebuild_buildspec = "devops/buildspec.yml"
 github_repos = [
   { name = "testingnewpipeline", branch="main", organization="sotatek-dev" }
 ]
+
+#=========================ACM for lb==================================
+dns_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/0c9c7e80-e373-4089-9087-857adaa5ab9e"
+
+#==========================target group===============================
+health_check_path = "/"
+host_header = "khai.devops.donnytran.com"
+priority = "100"

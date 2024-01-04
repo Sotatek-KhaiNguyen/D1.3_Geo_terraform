@@ -11,10 +11,9 @@ variable "dns_cert_arn" {
   type = string
 }
 
-variable "vpc_id" {
-  type = string
-}
-
-variable "subnet_ids" {
-  type = list
+variable "network" {
+  type = object({
+    vpc_id = string
+    subnet_ids = list(string)
+  })
 }
