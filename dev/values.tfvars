@@ -63,12 +63,12 @@ lb_hosted_zone_id = "zone_id_test"
 
 
 #=======================cf-cdn=========================
-cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/0c9c7e80-e373-4089-9087-857adaa5ab9e"
+cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/095bf072-a70e-4821-8e0a-46fbc88d5935"
 cdn_domain = "cdn.sotatek.com"
 
 
-#=======================cf-static=========================
-cf_static_page_name = "static-page"
+#=======================cf-fe=========================
+cf_static_page_name = "static"
 
 #=======================ecs-base===============================
 #vpc_id_private = "vpc-0f6f1f927ab619182"
@@ -125,9 +125,19 @@ private_subnet_numbers = {
 codebuild_image = "BUILD_GENERAL1_SMALL"
 codebuild_compute_type = "aws/codebuild/standard:5.0"
 #OAuthToken = "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"
-codebuild_buildspec = "devops/buildspec.yml"
+#codebuild_buildspec = "devops/buildspec.yml"
 github_repos = [
-  { name = "testingnewpipeline", branch="main", organization="sotatek-dev" }
+  { 
+    name = "testingnewpipeline", 
+    branch="main", 
+    organization="Sotatek-KhaiNguyen",
+    buildspec_variables=[
+      {
+        key   = "REPOSITORY_URI"
+        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-geotechnologies-ugc-app-ugc-container"
+      }
+    ] 
+  }
 ]
 
 #=========================ACM for lb==================================

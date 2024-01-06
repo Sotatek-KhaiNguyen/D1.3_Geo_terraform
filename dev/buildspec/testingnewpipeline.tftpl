@@ -1,0 +1,33 @@
+version: 0.2
+phases:
+  pre_build:
+    on-failure: ABORT
+    commands:
+    - echo 'Start pre build phase'
+    - export REPO_NAME=$(jq -r '.repo_name' metadata.json)
+    - export BRANCH_NAME=$(jq -r '.branch_name' metadata.json)
+    - mkdir working_dir && cd working_dir
+    - pwd
+    - git clone https://github.com/Sotatek-KhaiNguyen/testingnewpipeline.git
+    - pwd
+    - ls -la
+    - cd testingnewpipeline && git checkout $BRANCH_NAME
+    - export LASTEST_COMMIT_ID=`git log -1 --format=%H | cut -c 1-8`
+    - export IMAGE_TAG=$LASTEST_COMMIT_ID
+  build:
+    commands:
+    - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 115228050885.dkr.ecr.us-east-1.amazonaws.com
+    - echo $REPOSITORY_URI
+    - docker build -t $REPOSITORY_URI:latest .
+    - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+    - docker images
+    - printf '[{"name":"testingnewpipeline","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > ../artifact.json
+    
+  post_build:
+    commands:
+    - docker push $REPOSITORY_URI:latest
+    - docker push $REPOSITORY_URI:$IMAGE_TAG
+artifacts:
+  files:
+    - artifact.json
+  name: artifacts-testingnewpipeline

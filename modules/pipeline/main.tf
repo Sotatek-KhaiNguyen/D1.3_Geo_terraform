@@ -11,11 +11,18 @@ resource "aws_codebuild_project" "codebuild" {
     image           = var.codebuild_compute_type
     privileged_mode = true
     type            = "LINUX_CONTAINER"
+    dynamic "environment_variable"{
+
+      for_each = var.buildspec_variables
+      content {
+        name = environment_variable.value.key
+        value = environment_variable.value.value
+      }
+    }
   }
   source {
     type      = "CODEPIPELINE"
-    #buildspec = templatefile("${var.buildspec_file}",{})
-    buildspec = "${var.codebuild_buildspec}"
+    buildspec = templatefile("${var.buildspec_file}",{})
   }
 }
 

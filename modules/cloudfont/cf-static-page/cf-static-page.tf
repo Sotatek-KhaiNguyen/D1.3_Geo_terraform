@@ -13,22 +13,41 @@ resource "aws_s3_bucket" "s3_static_page" {
 #     }
 # }
 
-resource "aws_s3_bucket_policy" "policy_static_page" {
-  bucket = aws_s3_bucket.s3_static_page.id
+# resource "aws_s3_bucket_policy" "policy_static_page" {
+#   bucket = aws_s3_bucket.s3_static_page.id
 
-  policy = jsonencode({
-    # Version = ""
-    # Id      = ""
-    Statement = [
-      {
-        Sid       = "AllowPublic"
-        Effect    = "Allow"
-        Principal = "*"
-        Action    = "s3:GetObject"
-        Resource  = "${aws_s3_bucket.s3_static_page.arn}/**"
-      }
-    ]
-  })
+#   policy = jsonencode({
+#     # Version = ""
+#     # Id      = ""
+#     Statement = [
+#       {
+#         Sid       = "AllowPublic"
+#         Effect    = "Allow"
+#         Principal = "*"
+#         Action    = "s3:GetObject"
+#         Resource  = "${aws_s3_bucket.s3_static_page.arn}/**"
+#       }
+#     ]
+#   })
+# }
+
+data "aws_iam_policy_document" "policy_doc" {
+  # type = "CanonicalUser"
+  # identifiers = ["FeCloudFrontOriginAccessIdentity.S3CanonicalUserId"]
+  statement {
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.cf_oai.iam_arn]
+    }
+    effect    = "Allow"
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.s3_static_page.arn}/*"]
+  }
+}
+
+resource "aws_s3_bucket_policy" "policy" {
+  bucket = aws_s3_bucket.s3_static_page.id
+  policy = data.aws_iam_policy_document.policy_doc.json
 }
 
 resource "aws_cloudfront_origin_access_identity" "cf_oai" {

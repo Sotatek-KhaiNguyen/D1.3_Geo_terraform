@@ -221,7 +221,7 @@ variable "cdn_domain" {
   type = string
 }
 
-#=======================cf-cdn=========================
+#=======================cf-fe=========================
 variable "cf_static_page_name" {
   type = string
 }
@@ -317,7 +317,7 @@ variable "private_subnet_numbers" {
 variable "codebuild_image" {}
 variable "codebuild_compute_type" {}
 #variable "OAuthToken" {}
-variable "codebuild_buildspec" {}
+#variable "codebuild_buildspec" {}
 variable "github_repos" {}
 #variable "job_services" {}
 #variable "github_frontend_repos" {}

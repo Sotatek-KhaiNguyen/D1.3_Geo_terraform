@@ -21,7 +21,8 @@ data "aws_secretsmanager_secret_version" "ugc_secret_version" {
 
 provider "github" {
   token = jsondecode(data.aws_secretsmanager_secret_version.ugc_secret_version.secret_string)["OAuthToken"]
-  owner = "sotatek-dev"
+  #owner = "sotatek-dev"
+  owner = "Sotatek-KhaiNguyen"
 }
 
 locals {
@@ -150,12 +151,12 @@ module "rds" {
 #   cdn_domain =  var.cdn_domain
 # }
 
-# module "cf-static-page" {
-#   source = "../modules/cloudfont/cf-static-page"
-#   common = local.common
-#   cf_static_page_name = var.cf_static_page_name
-#   cf_cert_arn = var.cf_cert_arn
-# }
+module "cf_fe" {
+  source = "../modules/cloudfont/cf-static-page"
+  common = local.common
+  cf_static_page_name = var.cf_static_page_name
+  cf_cert_arn = var.cf_cert_arn
+}
 
 module "alb" {
   source = "../modules/loadbalancer/alb"
@@ -256,26 +257,24 @@ module "pipelinebase" {
   common = local.common
 }
 
-
 module "codepipeline" {
-  for_each = { for github in var.github_repos : github["name"] => github }
-
   source = "../modules/pipeline"
+  for_each = { for github in var.github_repos : github["name"] => github }
   common = local.common
-  #github_repos           = var.github_frontend_repos
   github_repos           = var.github_repos
   codebuild_image        = var.codebuild_image
   codebuild_compute_type = var.codebuild_compute_type
-  codebuild_buildspec    = var.codebuild_buildspec
+  #codebuild_buildspec    = var.codebuild_buildspec
   #OAuthToken             = var.OAuthToken
   bucketName             = module.pipelinebase.s3_bucket
   codepipelineRoleArn    = module.pipelinebase.codepipeline_role_arn
   gitBranch              = each.value.branch
   gitRepo                = each.value.name
   organization           = each.value.organization
+  buildspec_variables    = each.value.buildspec_variables
   codebuildRoleArn       = module.pipelinebase.codebuild_role_arn
   codedeployRoleArn      = module.pipelinebase.codedeploy_role_arn
-  lambda_endpoint = module.pipelinebase.lambda_endpoint
-  lambda_secret   = module.pipelinebase.secret_key
-  #buildspec_file  = "./buildspec/example.tpl"
+  lambda_endpoint        = module.pipelinebase.lambda_endpoint
+  lambda_secret          = module.pipelinebase.secret_key
+  buildspec_file         = "./buildspec/${each.value.name}.tftpl"
 }
