@@ -23,6 +23,16 @@ resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
   role       = aws_iam_role.codedeploy_role.name
 }
 
+# resource "aws_iam_role_policy_attachment" "AWSCodeDeployRole" {
+#   for_each = toset([
+#     "arn:aws:iam::aws:policy/service-role/AWSCodeDeployRole", 
+#     "arn:aws:iam::aws:policy/AWSCodeDeployRoleForECS"
+#   ])
+
+#   role       = aws_iam_role.codedeploy_role.name
+#   policy_arn = each.value
+# }
+
 resource "aws_iam_role" "pipeline_role" {
   name = "${var.common.env}-${var.common.project}-codepipeline-role"
 
@@ -72,17 +82,47 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
       "Resource": "*"
     },
     {
-      "Effect": "Allow",
       "Action": [
-        "codedeploy:*"
+        "codedeploy:BatchGetApplicationRevisions",
+        "codedeploy:BatchGetApplications",
+        "codedeploy:BatchGetDeploymentGroups",
+        "codedeploy:BatchGetDeployments",
+        "codedeploy:ContinueDeployment",
+        "codedeploy:CreateApplication",
+        "codedeploy:CreateDeployment",
+        "codedeploy:CreateDeploymentGroup",
+        "codedeploy:GetApplication",
+        "codedeploy:GetApplicationRevision",
+        "codedeploy:GetDeployment",
+        "codedeploy:GetDeploymentConfig",
+        "codedeploy:GetDeploymentGroup",
+        "codedeploy:GetDeploymentTarget",
+        "codedeploy:ListApplicationRevisions",
+        "codedeploy:ListApplications",
+        "codedeploy:ListDeploymentConfigs",
+        "codedeploy:ListDeploymentGroups",
+        "codedeploy:ListDeployments",
+        "codedeploy:ListDeploymentTargets",
+        "codedeploy:RegisterApplicationRevision",
+        "codedeploy:StopDeployment"
       ],
-      "Resource": "*"
+      "Resource": "*",
+      "Effect": "Allow"
     }
 
   ]
 }
 EOF
 }
+
+# {
+#       "Effect": "Allow",
+#       "Action": [
+#         "codedeploy:*"
+#       ],
+#       "Resource": "*"
+#     }
+
 resource "aws_iam_role" "codebuild_role" {
   name = "${var.common.env}-${var.common.project}-codebuild-role"
   assume_role_policy = jsonencode({

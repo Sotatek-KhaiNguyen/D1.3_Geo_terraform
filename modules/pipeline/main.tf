@@ -72,20 +72,26 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
-  stage {
-    name = "Deploy"
-    action {
-      name            = "Deploy_API"
-      category        = "Deploy"
-      owner           = "AWS"
-      provider        = "ECS"
-      input_artifacts = ["Build_Artifacts"]
-      version         = "1"
-      configuration = {
-        DeploymentTimeout = "20"
-        ClusterName       = "${var.common.env}-${var.common.project}"
-        ServiceName       = "${var.common.env}-${var.common.project}"
-        FileName          = "artifact.json"
+  dynamic "stage" {
+    for_each = length(var.service) > 0 ? ["1"] : []
+    content {
+      name = "Deploy"
+      dynamic "action" {
+        for_each = var.service
+        content {
+          name            = "Deploy-${action.value}"
+          category        = "Deploy"
+          owner           = "AWS"
+          provider        = "ECS"
+          input_artifacts = ["Build_Artifacts"]
+          version         = "1"
+          configuration = {
+            DeploymentTimeout = "20"
+            ClusterName       = "${var.common.env}-${var.common.project}"
+            ServiceName       = "${var.common.env}-${var.common.project}-${action.value}"
+            FileName          = "artifact.json"
+          }
+        }
       }
     }
   }

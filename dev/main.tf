@@ -271,6 +271,7 @@ module "codepipeline" {
   gitBranch              = each.value.branch
   gitRepo                = each.value.name
   organization           = each.value.organization
+  service                = each.value.service
   buildspec_variables    = each.value.buildspec_variables
   codebuildRoleArn       = module.pipelinebase.codebuild_role_arn
   codedeployRoleArn      = module.pipelinebase.codedeploy_role_arn

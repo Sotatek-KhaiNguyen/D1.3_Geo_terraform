@@ -21,6 +21,7 @@ variable "codebuild_image" {}
 variable "codebuild_compute_type" {}
 variable "github_repos" {}
 #variable "codebuild_buildspec" {}
+variable "service" {}
 variable "lambda_endpoint" {}
 variable "lambda_secret" {}
 variable "buildspec_file" {}

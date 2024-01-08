@@ -21,13 +21,15 @@ phases:
     - docker build -t $REPOSITORY_URI:latest .
     - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
     - docker images
-    - printf '[{"name":"testingnewpipeline","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > ../artifact.json
-    
+    - cd ../../
+    - pwd
+    - printf '[{"name":"ugc-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > artifact.json
+    - ls -la
+    - cat artifact.json
   post_build:
     commands:
     - docker push $REPOSITORY_URI:latest
     - docker push $REPOSITORY_URI:$IMAGE_TAG
 artifacts:
   files:
-    - artifact.json
-  name: artifacts-testingnewpipeline
+    - 'artifact.json'

@@ -96,7 +96,7 @@ cf_static_page_name = "static"
 # }
 ecs_service = [
   {
-    service_name = "api"
+    service_name = "testingservice"
     container_name = "ugc-container" 
     command = "pwd"
     container_port = "80"
@@ -104,7 +104,7 @@ ecs_service = [
     task_cpu = "512"
     task_ram = "2048"
     min_containers = "1"
-    max_containers = "3"
+    max_containers = "1"
     auto_scaling_target_value_cpu = "2"
     auto_scaling_target_value_ram = "4"
   }
@@ -128,6 +128,7 @@ codebuild_compute_type = "aws/codebuild/standard:5.0"
 #codebuild_buildspec = "devops/buildspec.yml"
 github_repos = [
   { 
+    service = ["testingservice"],
     name = "testingnewpipeline", 
     branch="main", 
     organization="Sotatek-KhaiNguyen",
