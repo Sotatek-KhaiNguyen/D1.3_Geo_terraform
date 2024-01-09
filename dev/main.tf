@@ -44,7 +44,7 @@ terraform {
   }
 }
 
-#============================================================================
+#=========================VPC===============================================
 
 module "vpc" {
   source = "../modules/vpc"
@@ -54,6 +54,8 @@ module "vpc" {
   private_subnet_numbers = var.private_subnet_numbers
 }
 
+
+#=========================ECR================================================
 module "ecr" {
   for_each = { for service in var.ecs_service : service["service_name"] => service }
   source = "../modules/ecr"
@@ -62,6 +64,7 @@ module "ecr" {
   container_name = each.value.container_name
 }
 
+#==========================EC2===============================================
 module "ec2" {
   source = "../modules/bastionhost"
   common = local.common
@@ -70,6 +73,7 @@ module "ec2" {
   subnet_id = module.vpc.public_subnet_ids[0]
 }
 
+#==========================Redis===============================================
 module "redis" {
   source = "../modules/cache"
   common = local.common
@@ -84,6 +88,7 @@ module "redis" {
   }
 }
 
+#===========================RDS===============================================
 module "rds" {
   source = "../modules/database"
   common = local.common
@@ -100,43 +105,23 @@ module "rds" {
   }
 }
 
+#=========================SSM===============================================
 module "ssm" {
   source = "../modules/ssm"
   common = local.common
   source_services = var.source_services
 }
 
-
+#========================ACM===============================================
 module "acm" {
   source = "../modules/acm"
   common = local.common
   domain_name_lb = var.domain_name_lb
 }
 
-# module "hostzone_static" {
-#   source = "../modules/route53/route53cdn"
-#   hosted_zone_public_id = var.hosted_zone_public_id
-#   domain_name_cf = var.domain_name_cf
-#   record_name = "static"
-# }
-
-# module "hostzone_lb" {
-#   source = "../modules/route53/route53lb"
-#   hosted_zone_public_id = var.hosted_zone_public_id
-#   domain_name = var.domain_name
-#   lb_domain_name = var.lb_domain_name
-#   lb_hosted_zone_id = var.lb_hosted_zone_id
-# }
-
-# module "cdn_domain" {
-#   source = "../modules/cloudfont/cf-cdn"
-#   common = local.common
-#   cf_cert_arn = var.cf_cert_arn
-#   cdn_domain =  var.cdn_domain
-# }
-
+#========================Cloudfont===============================================
 module "cf_fe" {
-  source = "../modules/cloudfont/cf-static-page"
+  source = "../modules/cloudfont/"
   common = local.common
   name_cf = "fe"
   domain_cf = var.domain_cf_fe
@@ -144,13 +129,14 @@ module "cf_fe" {
 }
 
 module "static" {
-  source = "../modules/cloudfont/cf-static-page"
+  source = "../modules/cloudfont/"
   common = local.common
   name_cf = "static"
   domain_cf = var.domain_cf_static
   cf_cert_arn = var.cf_cert_arn
 }
 
+#=========================Loadbalancer==========================================
 module "alb" {
   source = "../modules/loadbalancer/alb"
   common = local.common
@@ -161,6 +147,7 @@ module "alb" {
   dns_cert_arn = var.dns_cert_arn
 }
 
+#==========================Target group =====================================
 module "target_group" {
   source = "../modules/loadbalancer/target_group"
   common = local.common
@@ -168,12 +155,13 @@ module "target_group" {
   network = {
     vpc_id = module.vpc.vpc_id
   }
-  # container_port = "80"
   host_header = var.host_header
   aws_lb_listener_arn = module.alb.aws_lb_listener_arn
   priority = var.priority
 }
 
+
+#=============================ECS===============================================
 module "ecs_base" {
   source = "../modules/ecs/ecs-base"
   common = local.common
@@ -214,6 +202,7 @@ module "ecs_scale" {
 }
 
 
+#=========================CI/CD===============================================
 module "pipelinebase" {
   source = "../modules/pipelinebase"
   common = local.common
@@ -226,8 +215,6 @@ module "codepipeline" {
   github_repos           = var.github_repos
   codebuild_image        = var.codebuild_image
   codebuild_compute_type = var.codebuild_compute_type
-  #codebuild_buildspec    = var.codebuild_buildspec
-  #OAuthToken             = var.OAuthToken
   bucketName             = module.pipelinebase.s3_bucket
   codepipelineRoleArn    = module.pipelinebase.codepipeline_role_arn
   gitBranch              = each.value.branch
