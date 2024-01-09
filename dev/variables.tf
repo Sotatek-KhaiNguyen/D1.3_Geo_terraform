@@ -95,8 +95,9 @@ variable "rds_strorage" {
 }
 
 #========================ssm======================
-variable "source_services" {}
-
+variable "source_services" {
+  type = set(string)
+}
 
 #========================ACM=======================
 variable "domain_name_lb" {}

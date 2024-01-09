@@ -30,7 +30,7 @@ rds_strorage = "10"
 
 
 #========================ssm=====================================
-source_services = ["db-ugc", "ui-ugc"]
+source_services = ["api"]
 
 #=======================ACM=====================================
 #domain_name_lb = ["test1.devops.donnytran.com", "test2.devops.donnytran.com"]

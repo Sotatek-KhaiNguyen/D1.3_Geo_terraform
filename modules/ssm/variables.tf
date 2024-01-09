@@ -8,5 +8,5 @@ variable "common" {
 }
 
 variable "source_services" {
-  type        = set(string)
+  type = set(string)
 }

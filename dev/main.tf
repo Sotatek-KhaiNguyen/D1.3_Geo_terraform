@@ -121,7 +121,7 @@ module "acm" {
 
 #========================Cloudfont===============================================
 module "cf_fe" {
-  source = "../modules/cloudfont/"
+  source = "../modules/cloudfont"
   common = local.common
   name_cf = "fe"
   domain_cf = var.domain_cf_fe
@@ -129,7 +129,7 @@ module "cf_fe" {
 }
 
 module "static" {
-  source = "../modules/cloudfont/"
+  source = "../modules/cloudfont"
   common = local.common
   name_cf = "static"
   domain_cf = var.domain_cf_static
