@@ -7,3 +7,4 @@ variable "common" {
   })
 }
 
+variable "domain_name_lb" {}

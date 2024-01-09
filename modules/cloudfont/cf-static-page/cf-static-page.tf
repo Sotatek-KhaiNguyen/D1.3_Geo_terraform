@@ -1,5 +1,5 @@
 resource "aws_s3_bucket" "s3_static_page" {
-    bucket = "${var.common.env}-${var.common.project}-storage"
+    bucket = "${var.common.env}-${var.common.project}-${var.name_cf}"
 }
 
 # resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
@@ -51,12 +51,12 @@ resource "aws_s3_bucket_policy" "policy" {
 }
 
 resource "aws_cloudfront_origin_access_identity" "cf_oai" {
-  comment = "${var.common.env}-${var.common.project}-${var.cf_static_page_name}"
+  comment = "${var.common.env}-${var.common.project}-${var.name_cf}"
 }
 
 resource "aws_cloudfront_distribution" "cf_distribution" {
     origin {
-        origin_id = "${var.common.env}-${var.common.project}-${var.cf_static_page_name}"
+        origin_id = "${var.common.env}-${var.common.project}-${var.name_cf}"
         domain_name = aws_s3_bucket.s3_static_page.bucket_regional_domain_name
         s3_origin_config {
           origin_access_identity = aws_cloudfront_origin_access_identity.cf_oai.cloudfront_access_identity_path
@@ -68,12 +68,12 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
         restriction_type = "none"
       }
     }
-
+    aliases = [var.domain_cf]
     enabled = true
     default_cache_behavior {
       allowed_methods  = ["GET", "HEAD", "OPTIONS"]
       cached_methods   = ["GET", "HEAD", "OPTIONS"]
-      target_origin_id = "${var.common.env}-${var.common.project}-${var.cf_static_page_name}"
+      target_origin_id = "${var.common.env}-${var.common.project}-${var.name_cf}"
       compress = true
       forwarded_values {
         query_string = false

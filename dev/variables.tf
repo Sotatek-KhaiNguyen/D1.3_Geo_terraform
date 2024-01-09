@@ -26,14 +26,6 @@ variable "health_check_path" {
     type = string
 }
 
-# variable "container_port" {
-#     type = string
-# }
-
-# variable "aws_lb_listener_arn" {
-#   type = string
-# }
-
 variable "host_header" {
   type = string
 }
@@ -47,94 +39,11 @@ variable "image_tag_mutability" {
     type = string
 }
 
-
 #=======================EC2=====================================
 variable "ssh_public_key" {
   type = string
 }
-
-# variable "vpc_id" {
-#   type = string
-# }
-
-# variable "subnet_id" {
-#   type = string
-# }
-
-# variable "network" {
-#   type = object({
-#     vpc_id = string
-#     subnet_ids = string
-#     security_group = string
-#   })
-# }
-
-# variable "iam_credentials" {
-#   type = object({
-#     key = string
-#     secret = string
-#   })
-# }
-
-#=======================ci/cd=====================================
-variable "pipeline" {
-  type = object({
-    #role_codebuild = string
-    role_codepipeline = string
-    #role_event_pipeline = string
-    pipeline_bucket = string
-  })
-}
-
-
-
-# variable "buildspec_url" {
-#   type = string
-# }
-
-# variable "cicd" {
-#   type = object({
-#     codebuild = string
-#     codedeploy = string
-#   })
-# }
-
-variable "git_url" {
-  type = string
-}
-
-variable "branch" {
-  type = string
-}
-
-variable "repo" {
-  type = string
-}
-
-variable "name" {
-  type = string
-}
-variable "role_codebuild" {
-  type = string
-}
-
 #=======================redis cache=====================================
-# variable "network" {
-#   type = object({
-#     vpc_id_private = string
-#     subnet_ids = list(string)
-#     sg_container = string
-#   })
-# }
-
-# variable "subnet_ids" {
-#     type = list(string)
-# }
-
-# variable "sg_container" {
-#   type = string
-#   default = "default"
-# }
 
 variable "redis_engine_version" {
   type = string
@@ -185,22 +94,30 @@ variable "rds_strorage" {
     type = string
 }
 
+#========================ssm======================
+variable "source_services" {}
+
+
+#========================ACM=======================
+variable "domain_name_lb" {}
+
+
 #========================route53cdn=================
 variable "hosted_zone_public_id" {
     type = string
 }
 
-variable "domain_name" {
+variable "domain_name_cf" {
     type = string
 }
 
-variable "cf_s3_domain_name" {
-    type = string
-}
+# variable "record_name" {
+#     type = string
+# }
 
-variable "cf_s3_hosted_zone_id" {
-    type = string
-}
+# variable "cf_s3_hosted_zone_id" {
+#     type = string
+# }
 
 #========================route53lb=================
 variable "lb_domain_name" {
@@ -213,89 +130,35 @@ variable "lb_hosted_zone_id" {
 
 
 #=======================cf-cdn=========================
-variable "cf_cert_arn" {
-  type = string
-}
+# variable "cf_cert_arn" {
+#   type = string
+# }
 
 variable "cdn_domain" {
   type = string
 }
 
 #=======================cf-fe=========================
-variable "cf_static_page_name" {
+variable "domain_cf_fe" {
+  type = string
+}
+
+variable "domain_cf_static" {
+  type = string
+}
+
+# variable "name_cf" {
+#   type = string
+# }
+
+variable "cf_cert_arn" {
   type = string
 }
 
 #=======================ecs-base=============================
-# variable "vpc_id" {
-#   type = string
-# }
 
 #=======================ecs-scale=============================
-
 variable "ecs_service" {}
-
-# variable "ecs_scale_name" {
-#   type = string
-# }
-
-# variable "container_name" {
-#   type = string
-# }
-
-# variable "command" {
-#   type = string
-# }
-
-# # variable "container_port" {
-# #   type = number
-# # }
-
-# variable "desired_count" {
-#   type = string
-# }
-
-# variable "task_cpu" {
-#   type = string
-# }
-
-# variable "task_ram" {
-#   type = string
-# }
-
-# variable "min_containers" {
-#   type = string
-# }
-
-# variable "max_containers" {
-#   type = string
-# }
-
-# variable "auto_scaling_target_value_cpu" {
-#   type = string
-# }
-
-# variable "auto_scaling_target_value_ram" {
-#   type = string
-# }
-
-# # variable "sg_lb" {
-# #   type = string
-# # }
-
-# # variable "tg_arn" {
-# #   type = string
-# # }
-
-# # variable "ecs" {
-# #   type = object({
-# #     role_auto_scaling = string
-# #     role_execution = string
-# #     role_ecs_service = string
-# #     ecs_cluster_id = string
-# #     ecs_cluster_name = string
-# #   })
-# # }
 
 #====================VPC==============================
 variable "vpc_cidr" {
@@ -316,9 +179,4 @@ variable "private_subnet_numbers" {
 #========================CICD===================================
 variable "codebuild_image" {}
 variable "codebuild_compute_type" {}
-#variable "OAuthToken" {}
-#variable "codebuild_buildspec" {}
 variable "github_repos" {}
-#variable "job_services" {}
-#variable "github_frontend_repos" {}
-#variable "github_api_repos" {}

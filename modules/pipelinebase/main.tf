@@ -83,28 +83,7 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
     },
     {
       "Action": [
-        "codedeploy:BatchGetApplicationRevisions",
-        "codedeploy:BatchGetApplications",
-        "codedeploy:BatchGetDeploymentGroups",
-        "codedeploy:BatchGetDeployments",
-        "codedeploy:ContinueDeployment",
-        "codedeploy:CreateApplication",
-        "codedeploy:CreateDeployment",
-        "codedeploy:CreateDeploymentGroup",
-        "codedeploy:GetApplication",
-        "codedeploy:GetApplicationRevision",
-        "codedeploy:GetDeployment",
-        "codedeploy:GetDeploymentConfig",
-        "codedeploy:GetDeploymentGroup",
-        "codedeploy:GetDeploymentTarget",
-        "codedeploy:ListApplicationRevisions",
-        "codedeploy:ListApplications",
-        "codedeploy:ListDeploymentConfigs",
-        "codedeploy:ListDeploymentGroups",
-        "codedeploy:ListDeployments",
-        "codedeploy:ListDeploymentTargets",
-        "codedeploy:RegisterApplicationRevision",
-        "codedeploy:StopDeployment"
+        "codedeploy:*"
       ],
       "Resource": "*",
       "Effect": "Allow"
@@ -115,13 +94,10 @@ resource "aws_iam_role_policy" "codepipeline_policy" {
 EOF
 }
 
-# {
-#       "Effect": "Allow",
-#       "Action": [
-#         "codedeploy:*"
-#       ],
-#       "Resource": "*"
-#     }
+resource "aws_iam_role_policy_attachment" "AWSCodeDeployRoleForECS" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
+  role       = aws_iam_role.pipeline_role.id
+}
 
 resource "aws_iam_role" "codebuild_role" {
   name = "${var.common.env}-${var.common.project}-codebuild-role"

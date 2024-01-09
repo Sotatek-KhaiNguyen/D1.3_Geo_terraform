@@ -2,14 +2,10 @@ variable "hosted_zone_public_id" {
     type = string
 }
 
-variable "domain_name" {
+variable "domain_name_cf" {
     type = string
 }
 
-variable "cf_s3_domain_name" {
-    type = string
-}
-
-variable "cf_s3_hosted_zone_id" {
+variable "record_name" {
     type = string
 }

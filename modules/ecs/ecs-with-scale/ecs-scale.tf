@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "task_definition" {
   depends_on = [aws_cloudwatch_log_group.log_group]
 }
 
-resource "aws_ecs_service" "ecs_sercive" {
+resource "aws_ecs_service" "ecs_service" {
   name = "${var.common.env}-${var.common.project}-${var.service_name}"
   cluster = var.ecs.ecs_cluster_id
   task_definition = aws_ecs_task_definition.task_definition.arn
@@ -97,7 +97,7 @@ resource "aws_ecs_service" "ecs_sercive" {
 resource "aws_appautoscaling_target" "ecs_target" {
   max_capacity = var.max_containers
   min_capacity = var.min_containers
-  resource_id = "service/${var.ecs.ecs_cluster_name}/${aws_ecs_service.ecs_sercive.name}"
+  resource_id = "service/${var.ecs.ecs_cluster_name}/${aws_ecs_service.ecs_service.name}"
   scalable_dimension = "ecs:service:DesiredCount"
   service_namespace = "ecs"
   role_arn = var.ecs.role_auto_scaling

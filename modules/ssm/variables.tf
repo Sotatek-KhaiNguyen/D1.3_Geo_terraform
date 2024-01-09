@@ -7,10 +7,6 @@ variable "common" {
   })
 }
 
-variable "subnet_id" {
-    type =  string
+variable "source_services" {
+  type        = set(string)
 }
-
-# variable "allocation_id" {
-#     type = string
-# }

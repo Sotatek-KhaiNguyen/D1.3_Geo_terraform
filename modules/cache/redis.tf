@@ -2,6 +2,11 @@ locals {
   ports = join(" ", var.ports)
 }
 
+resource "aws_cloudwatch_log_group" "log_group" {
+  name = "redis/${var.common.env}-${var.common.project}-ugc"
+  retention_in_days = 7
+}
+
 resource "aws_elasticache_cluster" "redis" {
   cluster_id = "${var.common.env}-${var.common.project}"
   node_type = var.node_type
@@ -10,6 +15,13 @@ resource "aws_elasticache_cluster" "redis" {
   engine = var.redis_engine_version
   subnet_group_name = aws_elasticache_subnet_group.cache_subnet_group.name
   security_group_ids = [aws_security_group.sg_redis.id]
+
+  log_delivery_configuration {
+    destination      = aws_cloudwatch_log_group.log_group.name
+    destination_type = "cloudwatch-logs"
+    log_format       = "json"
+    log_type         = "engine-log"
+  }
 }
 
 resource "aws_elasticache_subnet_group" "cache_subnet_group" {

@@ -20,7 +20,7 @@ data "aws_secretsmanager_secret_version" "ugc_secret_version" {
 }
 
 provider "github" {
-  token = jsondecode(data.aws_secretsmanager_secret_version.ugc_secret_version.secret_string)["OAuthToken"]
+  token = jsondecode(data.aws_secretsmanager_secret_version.ugc_secret_version.secret_string)["githubtoken"]
   #owner = "sotatek-dev"
   owner = "Sotatek-KhaiNguyen"
 }
@@ -32,11 +32,6 @@ locals {
     region = "${var.region}"
     account_id = "${var.account_id}"
   }
-  # network = {
-  #   vpc_id = "${var.vpc_id}"
-  #   subnet_id = "${var.subnet_id}"
-  #   security_group = "${var.security_group}"
-  # }
 
 }
 
@@ -49,8 +44,6 @@ terraform {
   }
 }
 
-
-
 #============================================================================
 
 module "vpc" {
@@ -62,9 +55,11 @@ module "vpc" {
 }
 
 module "ecr" {
+  for_each = { for service in var.ecs_service : service["service_name"] => service }
   source = "../modules/ecr"
   common = local.common
   image_tag_mutability = var.image_tag_mutability
+  container_name = each.value.container_name
 }
 
 module "ec2" {
@@ -74,23 +69,6 @@ module "ec2" {
   vpc_id = module.vpc.vpc_id
   subnet_id = module.vpc.public_subnet_ids[0]
 }
-
-# module "pipeline" {
-#   source = "../modules/cicd/codepipeline"
-#   common = local.common
-#   repo = var.repo
-#   git_url = var.git_url
-#   branch = var.branch
-#   name = var.name
-#   pipeline = var.pipeline
-# }
-
-# module "codebuild" {
-#   source = "../modules/cicd/codebuild"
-#   common = local.common
-#   name = var.name
-#   role_codebuild = var.role_codebuild
-# }
 
 module "redis" {
   source = "../modules/cache"
@@ -122,18 +100,24 @@ module "rds" {
   }
 }
 
-# module "natgateway" {
-#   source = "../modules/natgateway"
-#   common = local.common
-#   subnet_id = var.subnet_id
-# }
+module "ssm" {
+  source = "../modules/ssm"
+  common = local.common
+  source_services = var.source_services
+}
 
-# module "hostzone_cdn" {
+
+module "acm" {
+  source = "../modules/acm"
+  common = local.common
+  domain_name_lb = var.domain_name_lb
+}
+
+# module "hostzone_static" {
 #   source = "../modules/route53/route53cdn"
 #   hosted_zone_public_id = var.hosted_zone_public_id
-#   domain_name = var.domain_name
-#   cf_s3_domain_name = var.cf_s3_domain_name
-#   cf_s3_hosted_zone_id = var.cf_s3_hosted_zone_id
+#   domain_name_cf = var.domain_name_cf
+#   record_name = "static"
 # }
 
 # module "hostzone_lb" {
@@ -154,7 +138,16 @@ module "rds" {
 module "cf_fe" {
   source = "../modules/cloudfont/cf-static-page"
   common = local.common
-  cf_static_page_name = var.cf_static_page_name
+  name_cf = "fe"
+  domain_cf = var.domain_cf_fe
+  cf_cert_arn = var.cf_cert_arn
+}
+
+module "static" {
+  source = "../modules/cloudfont/cf-static-page"
+  common = local.common
+  name_cf = "static"
+  domain_cf = var.domain_cf_static
   cf_cert_arn = var.cf_cert_arn
 }
 
@@ -181,8 +174,6 @@ module "target_group" {
   priority = var.priority
 }
 
-
-
 module "ecs_base" {
   source = "../modules/ecs/ecs-base"
   common = local.common
@@ -190,35 +181,6 @@ module "ecs_base" {
     vpc_id = module.vpc.vpc_id
   }
 }
-
-# module "ecs_scale" {
-#   source = "../modules/ecs/ecs-with-scale"
-#   common = local.common
-#   ecs_scale_name = var.ecs_scale_name
-#   container_name = var.container_name
-#   command = var.command
-#   container_port = var.container_port
-#   desired_count = var.desired_count
-#   task_cpu = var.task_cpu
-#   task_ram = var.task_ram
-#   min_containers = var.min_containers
-#   max_containers = var.max_containers
-#   auto_scaling_target_value_cpu = var.auto_scaling_target_value_cpu
-#   auto_scaling_target_value_ram = var.auto_scaling_target_value_ram
-#   sg_lb = module.alb.sg_lb
-#   tg_arn = module.target_group.tg_arn
-#   ecs = {
-#     role_auto_scaling = module.ecs_base.role_auto_scaling
-#     role_execution = module.ecs_base.role_execution
-#     role_ecs_service = module.ecs_base.role_ecs_service
-#     ecs_cluster_id = module.ecs_base.ecs_cluster_id
-#     ecs_cluster_name = module.ecs_base.ecs_cluster_name
-#   }
-#   network = {
-#     vpc_id = module.vpc.vpc_id
-#     subnet_ids = [module.vpc.private_subnet_ids[0]]
-#   }
-# }
 
 module "ecs_scale" {
   for_each = { for service in var.ecs_service : service["service_name"] => service }

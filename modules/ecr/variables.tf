@@ -10,3 +10,7 @@ variable "common" {
 variable "image_tag_mutability" {
     type = string
 }
+
+variable "container_name" {
+  type = string
+}

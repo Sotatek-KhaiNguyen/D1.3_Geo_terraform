@@ -8,7 +8,11 @@ variable "common" {
   )
 }
 
-variable "cf_static_page_name" {
+variable "domain_cf" {
+  type = string
+}
+
+variable "name_cf" {
   type = string
 }
 
