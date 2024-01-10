@@ -21,19 +21,6 @@ variable "dns_cert_arn" {
   type = string
 }
 
-#======================target group=================================
-variable "health_check_path" {
-    type = string
-}
-
-variable "host_header" {
-  type = string
-}
-
-variable "priority" {
-  type = string
-}
-
 #=======================ECR=====================================
 variable "image_tag_mutability" {
     type = string
@@ -56,10 +43,6 @@ variable "num_cache_nodes" {
 variable "node_type" {
   type = string
 }
-
-# variable "port" {
-#   type = string
-# }
 
 variable "ports" {
   type = list(string)
@@ -102,43 +85,6 @@ variable "source_services" {
 #========================ACM=======================
 variable "domain_name_lb" {}
 
-
-#========================route53cdn=================
-variable "hosted_zone_public_id" {
-    type = string
-}
-
-variable "domain_name_cf" {
-    type = string
-}
-
-# variable "record_name" {
-#     type = string
-# }
-
-# variable "cf_s3_hosted_zone_id" {
-#     type = string
-# }
-
-#========================route53lb=================
-variable "lb_domain_name" {
-    type = string
-}
-
-variable "lb_hosted_zone_id" {
-    type = string
-}
-
-
-#=======================cf-cdn=========================
-# variable "cf_cert_arn" {
-#   type = string
-# }
-
-variable "cdn_domain" {
-  type = string
-}
-
 #=======================cf-fe=========================
 variable "domain_cf_fe" {
   type = string
@@ -148,15 +94,9 @@ variable "domain_cf_static" {
   type = string
 }
 
-# variable "name_cf" {
-#   type = string
-# }
-
 variable "cf_cert_arn" {
   type = string
 }
-
-#=======================ecs-base=============================
 
 #=======================ecs-scale=============================
 variable "ecs_service" {}

@@ -33,36 +33,18 @@ rds_strorage = "10"
 source_services = ["api"]
 
 #=======================ACM=====================================
-#domain_name_lb = ["test1.devops.donnytran.com", "test2.devops.donnytran.com"]
 domain_name_lb = "devops.donnytran.com"
-
-#========================route53cdn============================
-hosted_zone_public_id = "Z06779651QZ4JN1GLQ0XR"
-#domain_name = "khai.devops.donnytran.com"
-domain_name_cf = "devops.donnytran.com"
-
-#========================route53lb=================
-lb_domain_name = "lb.sotatek.com"
-lb_hosted_zone_id = "zone_id_test"
-
-
-#=======================cf-cdn=========================
-cdn_domain = "cdn.sotatek.com"
-
 
 #=======================cf-fe=========================
 cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/230f0f65-1658-4493-89d6-47922ce4c896"
 domain_cf_fe = "fe.devops.donnytran.com"
 domain_cf_static = "static.devops.donnytran.com"
 
-#=======================ecs-base===============================
-
-
 #=======================ecs-scale===============================
 ecs_service = [
   {
     service_name = "testingservice"
-    container_name = "ugc-container" 
+    container_name = "ugc" 
     command = "pwd"
     container_port = "80"
     desired_count = "1"
@@ -72,6 +54,27 @@ ecs_service = [
     max_containers = "1"
     auto_scaling_target_value_cpu = "2"
     auto_scaling_target_value_ram = "4"
+    healthcheck_path = "/"
+    priority = "1"
+    use_load_balancer = true
+    host_header = "ugc.devops.donnytran.com"
+  },
+  {
+    service_name = "testingweb"
+    container_name = "web" 
+    command = "pwd"
+    container_port = "80"
+    desired_count = "1"
+    task_cpu = "512"
+    task_ram = "2048"
+    min_containers = "1"
+    max_containers = "1"
+    auto_scaling_target_value_cpu = "2"
+    auto_scaling_target_value_ram = "4"
+    healthcheck_path = "/"
+    priority = "2"
+    use_load_balancer = true
+    host_header = "web.devops.donnytran.com"
   }
 ]
 
@@ -98,7 +101,19 @@ github_repos = [
     buildspec_variables=[
       {
         key   = "REPOSITORY_URI"
-        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-geotechnologies-ugc-app-ugc-container"
+        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-geotechnologies-ugc-app-ugc"
+      }
+    ] 
+  },
+  { 
+    service = ["testingweb"],
+    name = "testweb", 
+    branch="main", 
+    organization="Sotatek-KhaiNguyen",
+    buildspec_variables=[
+      {
+        key   = "REPOSITORY_URI"
+        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-geotechnologies-ugc-app-web"
       }
     ] 
   }
@@ -106,9 +121,3 @@ github_repos = [
 
 #=========================ACM for lb==================================
 dns_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/0c9c7e80-e373-4089-9087-857adaa5ab9e"
-
-
-#==========================target group===============================
-health_check_path = "/"
-host_header = "khai.devops.donnytran.com"
-priority = "100"

@@ -60,7 +60,7 @@ resource "aws_lb_listener" "lb_listener_https" {
     }
 }
 
-// print to console output
+
 output "lb_dns_name" {
   value = aws_lb.lb.dns_name
 }

@@ -55,7 +55,7 @@ variable "sg_lb" {
   type = string
 }
 
-variable "tg_arn" {
+variable "priority" {
   type = string
 }
 
@@ -77,4 +77,14 @@ variable "network" {
   })
 }
 
+variable "aws_lb_listener_arn" {}
+
+variable "host_header" {
+  type = string
+}
+
 variable "ecs_service" {}
+
+variable "use_load_balancer" {}
+
+variable "healthcheck_path" {}

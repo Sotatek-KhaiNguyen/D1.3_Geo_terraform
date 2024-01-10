@@ -29,7 +29,7 @@ phases:
     - docker images
     - cd ../../
     - pwd
-    - printf '[{"name":"ugc","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > artifact.json
+    - printf '[{"name":"web","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > artifact.json
     - ls -la
     - cat artifact.json
   post_build:

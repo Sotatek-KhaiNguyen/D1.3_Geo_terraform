@@ -147,20 +147,6 @@ module "alb" {
   dns_cert_arn = var.dns_cert_arn
 }
 
-#==========================Target group =====================================
-module "target_group" {
-  source = "../modules/loadbalancer/target_group"
-  common = local.common
-  health_check_path = var.health_check_path
-  network = {
-    vpc_id = module.vpc.vpc_id
-  }
-  host_header = var.host_header
-  aws_lb_listener_arn = module.alb.aws_lb_listener_arn
-  priority = var.priority
-}
-
-
 #=============================ECS===============================================
 module "ecs_base" {
   source = "../modules/ecs/ecs-base"
@@ -186,8 +172,12 @@ module "ecs_scale" {
   max_containers = each.value.max_containers
   auto_scaling_target_value_cpu = each.value.auto_scaling_target_value_cpu
   auto_scaling_target_value_ram = each.value.auto_scaling_target_value_ram
-  sg_lb = module.alb.sg_lb
-  tg_arn = module.target_group.tg_arn
+  use_load_balancer =  each.value.use_load_balancer
+  healthcheck_path = each.value.healthcheck_path
+  aws_lb_listener_arn = module.alb.aws_lb_listener_arn
+  host_header = try(each.value.host_header, null)
+  sg_lb = try(module.alb.sg_lb, null)
+  priority = try(each.value.priority, null)
   ecs = {
     role_auto_scaling = module.ecs_base.role_auto_scaling
     role_execution = module.ecs_base.role_execution
@@ -207,7 +197,6 @@ module "pipelinebase" {
   source = "../modules/pipelinebase"
   common = local.common
 }
-
 module "codepipeline" {
   source = "../modules/pipeline"
   for_each = { for github in var.github_repos : github["name"] => github }
