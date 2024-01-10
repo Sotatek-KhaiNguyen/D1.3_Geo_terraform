@@ -120,4 +120,4 @@ github_repos = [
 ]
 
 #=========================ACM for lb==================================
-dns_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/0c9c7e80-e373-4089-9087-857adaa5ab9e"
+dns_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/230f0f65-1658-4493-89d6-47922ce4c896"

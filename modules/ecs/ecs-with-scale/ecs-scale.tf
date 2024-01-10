@@ -186,3 +186,5 @@ resource "aws_lb_listener_rule" "lb_listener_rule" {
     }
   }
 }
+
+#########S3 FOR DATA ###################
