@@ -48,7 +48,7 @@ resource "aws_codepipeline" "codepipeline" {
 
       configuration = {
         S3Bucket   = var.bucketName
-        S3ObjectKey = format("%s/%s/%s/metadata.zip",var.organization,var.gitRepo,var.gitBranch)
+        S3ObjectKey = format("%s/%s/metadata.zip",var.gitRepo,var.gitBranch)
         PollForSourceChanges = false
       }
     }
@@ -97,19 +97,27 @@ resource "aws_codepipeline" "codepipeline" {
   }
 }
 
-## Wire the CodePipeline webhook into a GitHub repository.
-resource "github_repository_webhook" "bar" {
-  repository = var.gitRepo
+# # Wire the CodePipeline webhook into a GitHub repository.
+# resource "github_repository_webhook" "bar" {
+#   repository = var.gitRepo
 
-  configuration {
-    url          = var.lambda_endpoint
-    content_type = "json"
-    insecure_ssl = false
-    secret       = var.lambda_secret
-  }
+#   configuration {
+#     url          = var.lambda_endpoint
+#     content_type = "json"
+#     insecure_ssl = false
+#     secret       = var.lambda_secret
+#   }
 
-  events = ["push"]
-}
+#   events = ["push"]
+# }
+
+# resource "gitlab_project_hook" "this" {
+#   project                 = var.gitRepo
+#   url                     = var.lambda_endpoint
+#   token                   = var.lambda_secret
+#   enable_ssl_verification = true
+#   push_events             = true
+# }
 
 resource "aws_cloudwatch_event_rule" "pipeline-event" {
   name        = "${var.common.env}${var.common.project}-${var.gitRepo}-pipeline-event"
@@ -124,7 +132,7 @@ resource "aws_cloudwatch_event_rule" "pipeline-event" {
     "eventName": ["PutObject", "CompleteMultipartUpload", "CopyObject"],
     "requestParameters": {
       "bucketName": ["${var.bucketName}"],
-      "key": ["${format("%s/%s/%s/metadata.zip",var.organization,var.gitRepo,var.gitBranch)}"]
+      "key": ["${format("%s/%s/metadata.zip",var.gitRepo,var.gitBranch)}"]
     }
   }
 }

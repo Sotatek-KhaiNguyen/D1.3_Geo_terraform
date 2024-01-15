@@ -1,5 +1,4 @@
 #variable "OAuthToken" {}
-variable "organization" {}
 variable "gitRepo" {}
 variable "gitBranch" {}
 variable "codepipelineRoleArn" {}

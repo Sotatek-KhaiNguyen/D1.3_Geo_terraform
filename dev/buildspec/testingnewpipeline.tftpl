@@ -2,7 +2,7 @@ version: 0.2
 env:
   shell: bash 
   parameter-store:
-      GITTOEKN: "GITTOKEN"
+      GITLABTOKEN: "GITLABTOKEN"
 phases:
   pre_build:
     on-failure: ABORT
@@ -12,12 +12,10 @@ phases:
     - export BRANCH_NAME=$(jq -r '.branch_name' metadata.json)
     - mkdir working_dir && cd working_dir
     - pwd
-    - export FOLDER_REPO=$(echo "$REPO_NAME" | cut -d'/' -f2)
-    - echo $FOLDER_REPO
-    - git clone https://oauth2:$GITTOEKN@github.com/$REPO_NAME
-    - pwd
     - ls -la
-    - cd $FOLDER_REPO && git checkout $BRANCH_NAME
+    - git clone https://oauth2:$GITLABTOKEN@gitlab.com/grp_testing/$REPO_NAME
+    - ls -la
+    - cd $REPO_NAME && git checkout $BRANCH_NAME
     - export LASTEST_COMMIT_ID=`git log -1 --format=%H | cut -c 1-8`
     - export IMAGE_TAG=$LASTEST_COMMIT_ID
   build:

@@ -188,3 +188,7 @@ resource "aws_lb_listener_rule" "lb_listener_rule" {
 }
 
 #########S3 FOR DATA ###################
+resource "aws_s3_bucket" "s3" {
+  count       = var.use_s3_for_data == true ? 1 : 0
+  bucket = "${var.common.env}-${var.common.project}-${var.container_name}-data"
+}

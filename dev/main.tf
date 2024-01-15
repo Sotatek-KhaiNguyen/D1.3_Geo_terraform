@@ -105,6 +105,18 @@ module "rds" {
   }
 }
 
+#===========================EXPORT_LOGS===============================================
+module "export_logs" {
+  source = "../modules/export_logs"
+  common = local.common
+  # dev_rds_cloudwatch_logs = module.rds.rds_cloudwatch_logs
+  # dev_rds_s3_logs = module.rds.rds_s3_logs
+  # dev_redis_slowly_logs = module.redis.dev_redis_slowly_logs
+  # dev_redis_engine_logs = module.redis.dev_redis_engine_logs
+  # dev_redis_engine_s3_logs = module.redis.dev_redis_engine_s3_logs
+  # dev_redis_slowly_s3_logs = module.redis.dev_redis_slowly_s3_logs
+}
+
 #=========================SSM===============================================
 module "ssm" {
   source = "../modules/ssm"
@@ -178,6 +190,7 @@ module "ecs_scale" {
   host_header = try(each.value.host_header, null)
   sg_lb = try(module.alb.sg_lb, null)
   priority = try(each.value.priority, null)
+  use_s3_for_data = each.value.use_s3_for_data
   ecs = {
     role_auto_scaling = module.ecs_base.role_auto_scaling
     role_execution = module.ecs_base.role_execution
@@ -208,7 +221,6 @@ module "codepipeline" {
   codepipelineRoleArn    = module.pipelinebase.codepipeline_role_arn
   gitBranch              = each.value.branch
   gitRepo                = each.value.name
-  organization           = each.value.organization
   service                = each.value.service
   buildspec_variables    = each.value.buildspec_variables
   codebuildRoleArn       = module.pipelinebase.codebuild_role_arn

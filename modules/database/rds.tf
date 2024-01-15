@@ -12,6 +12,9 @@ resource "aws_db_instance" "db" {
   db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
   vpc_security_group_ids = [aws_security_group.sg_db.id]
   skip_final_snapshot  = true // dont create snapshot before deleted
+  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
+  # create_cloudwatch_log_group = true
+  # cloudwatch_log_group_retention_in_days = 7
   backup_retention_period = "7"
   backup_window = "00:30-01:30"
   maintenance_window = "sat:04:30-sat:05:30"
@@ -57,4 +60,9 @@ resource "aws_db_parameter_group" "db_parameter_group" {
 resource "aws_db_subnet_group" "db_subnet_group" {
     name = "${var.common.env}-${var.common.project}-${var.rds_name}"
     subnet_ids = var.network.subnet_ids
+}
+
+#########S3 FOR ARCHIVED LOG ###################
+resource "aws_s3_bucket" "s3" {
+  bucket = "${var.common.env}-${var.common.project}-${var.rds_name}-data"
 }

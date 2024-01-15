@@ -88,3 +88,5 @@ variable "ecs_service" {}
 variable "use_load_balancer" {}
 
 variable "healthcheck_path" {}
+
+variable "use_s3_for_data" {}

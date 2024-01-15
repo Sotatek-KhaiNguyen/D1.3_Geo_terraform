@@ -2,9 +2,22 @@ locals {
   ports = join(" ", var.ports)
 }
 
-resource "aws_cloudwatch_log_group" "log_group" {
+resource "aws_cloudwatch_log_group" "log_group_slowly" {
   name = "redis/${var.common.env}-${var.common.project}-ugc"
   retention_in_days = 7
+}
+
+resource "aws_cloudwatch_log_group" "log_group_engine" {
+  name = "redis/${var.common.env}-${var.common.project}-ugc"
+  retention_in_days = 7
+}
+
+resource "aws_s3_bucket" "engine_s3" {
+  bucket = "${var.common.env}-${var.common.project}-engine-data"
+}
+
+resource "aws_s3_bucket" "slowly_s3" {
+  bucket = "${var.common.env}-${var.common.project}-slowly-data"
 }
 
 resource "aws_elasticache_cluster" "redis" {
@@ -17,7 +30,14 @@ resource "aws_elasticache_cluster" "redis" {
   security_group_ids = [aws_security_group.sg_redis.id]
 
   log_delivery_configuration {
-    destination      = aws_cloudwatch_log_group.log_group.name
+    destination      = aws_cloudwatch_log_group.log_group_slowly.name
+    destination_type = "cloudwatch-logs"
+    log_format       = "text"
+    log_type         = "slow-log"
+  }
+
+  log_delivery_configuration {
+    destination      = aws_cloudwatch_log_group.log_group_engine.name
     destination_type = "cloudwatch-logs"
     log_format       = "json"
     log_type         = "engine-log"

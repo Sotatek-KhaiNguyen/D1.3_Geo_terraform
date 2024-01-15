@@ -1,5 +1,5 @@
 #=================common=======================
-project = "geotechnologies-ugc-app"
+project = "ugc-geotech"
 env = "dev"
 region = "us-east-1"
 account_id = "115228050885"
@@ -20,11 +20,11 @@ ports = ["6379"]
 
 
 #=======================rds=====================================
-rds_port = "3306"
-rds_family = "mysql8.0"
-rds_engine = "mysql"
-rds_engine_version = "8.0.35"
-rds_name = "api"
+rds_port = "5432"
+rds_family = "postgres15"
+rds_engine = "postgres"
+rds_engine_version = "15.4"
+rds_name = "dbpostgresql"
 rds_class = "db.t3.micro"
 rds_strorage = "10"
 
@@ -57,6 +57,7 @@ ecs_service = [
     healthcheck_path = "/"
     priority = "1"
     use_load_balancer = true
+    use_s3_for_data = true
     host_header = "ugc.devops.donnytran.com"
   },
   {
@@ -74,6 +75,7 @@ ecs_service = [
     healthcheck_path = "/"
     priority = "2"
     use_load_balancer = true
+    use_s3_for_data = true
     host_header = "web.devops.donnytran.com"
   }
 ]
@@ -96,24 +98,22 @@ github_repos = [
   { 
     service = ["testingservice"],
     name = "testingnewpipeline", 
-    branch="main", 
-    organization="Sotatek-KhaiNguyen",
+    branch="dev", 
     buildspec_variables=[
       {
         key   = "REPOSITORY_URI"
-        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-geotechnologies-ugc-app-ugc"
+        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-ugc-geotech-ugc"
       }
     ] 
   },
   { 
     service = ["testingweb"],
     name = "testweb", 
-    branch="main", 
-    organization="Sotatek-KhaiNguyen",
+    branch="feature", 
     buildspec_variables=[
       {
         key   = "REPOSITORY_URI"
-        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-geotechnologies-ugc-app-web"
+        value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-ugc-geotech-web"
       }
     ] 
   }
