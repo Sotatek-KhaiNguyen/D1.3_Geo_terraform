@@ -62,46 +62,6 @@ resource "aws_db_subnet_group" "db_subnet_group" {
     subnet_ids = var.network.subnet_ids
 }
 
-#########S3 FOR ARCHIVED LOG ###################
-resource "aws_s3_bucket" "s3" {
-  bucket = "${var.common.env}-${var.common.project}-${var.rds_name}-logs"
-}
-
-resource "aws_s3_bucket_policy" "allow_access_resource" {
-  bucket = aws_s3_bucket.s3.id
-  policy = data.aws_iam_policy_document.allow_access_resource.json
-}
-
-data "aws_iam_policy_document" "allow_access_resource" {
-  statement {
-    sid       = ""
-    effect    = "Allow"
-    resources = ["arn:aws:s3:::${var.common.env}-${var.common.project}-${var.rds_name}-logs"]
-    actions   = ["s3:GetBucketAcl"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["logs.us-east-1.amazonaws.com"]
-    }
-  }
-
-  statement {
-    sid       = ""
-    effect    = "Allow"
-    resources = ["arn:aws:s3:::${var.common.env}-${var.common.project}-${var.rds_name}-logs/*"]
-    actions   = ["s3:PutObject"]
-
-    principals {
-      type        = "Service"
-      identifiers = ["logs.us-east-1.amazonaws.com"]
-    }
-  }
-}
-
 output "dev_postgresql_log" {
   value = "/aws/rds/instance/${aws_db_instance.db.identifier}/postgresql"
-}
-
-output "dev_rds_s3_logs" {
-  value = aws_s3_bucket.s3.bucket
 }

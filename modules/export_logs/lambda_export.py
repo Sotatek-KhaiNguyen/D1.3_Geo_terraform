@@ -1,10 +1,18 @@
 import boto3
 import json
+import os
 from datetime import datetime
+
+dev_postgresql_log = os.environ.get("dev_postgresql_log")
+dev_redis_engine_logs = os.environ.get("dev_redis_engine_logs")
+dev_redis_slowly_logs = os.environ.get("dev_redis_slowly_logs")
+dev_s3_achived_logs = os.environ.get("dev_s3_achived_logs")
 
 def lambda_handler(event, context):
     log_group_names = ['/aws/rds/instance/mysql-db/error', '/aws/rds/instance/postgresql-db/postgresql', 'redis_slow/dev-ugc']
-    bucket_name = 'collectlogstest'
+    bucket_name = dev_s3_achived_logs
+    # log_group_names = [dev_postgresql_log, dev_redis_engine_logs, dev_redis_slowly_logs]
+    # bucket_name = dev_s3_achived_logs
 
     # Create AWS clients
     logs_client = boto3.client('logs')

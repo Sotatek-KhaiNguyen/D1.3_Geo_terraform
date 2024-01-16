@@ -82,18 +82,11 @@ resource "aws_lambda_function" "lambda" {
     variables = {
         #RDS_LOGS
         # dev_postgresql_log = var.dev_postgresql_log
-        # dev_rds_s3_logs = var.dev_rds_s3_logs
         # #REDIS_LOGS
         # dev_redis_slowly_logs = var.dev_redis_slowly_logs
         # dev_redis_engine_logs = var.dev_redis_engine_logs
-        # dev_redis_engine_s3_logs = var.dev_redis_engine_s3_logs
-        # dev_redis_slowly_s3_logs = var.dev_redis_slowly_s3_logs
-
-        dev_postgresql_log = "/aws/rds/instance/mysql-db/error"
-        dev_rds_s3_logs = "collectlogsachived"
-
-        dev_postgresql_log_test = "/aws/rds/instance/postgresql-db/postgresql"
-        dev_rds_s3_logs_test = "collectlogstest"
+        # #ACHIVED_LOGS
+        dev_s3_achived_logs = aws_s3_bucket.s3.bucket
     }
   }
 }
@@ -103,49 +96,58 @@ resource "aws_lambda_function_url" "export_logs" {
   authorization_type = "NONE"
 }
 
+#########S3 FOR ARCHIVED LOG ###################
+resource "aws_s3_bucket" "s3" {
+  bucket = "${var.common.env}-${var.common.project}-logs"
+}
+
+resource "aws_s3_bucket_policy" "allow_access_resource" {
+  bucket = aws_s3_bucket.s3.id
+  policy = data.aws_iam_policy_document.allow_access_resource.json
+}
+
+data "aws_iam_policy_document" "allow_access_resource" {
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:s3:::${var.common.env}-${var.common.project}-logs"]
+    actions   = ["s3:GetBucketAcl"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["logs.us-east-1.amazonaws.com"]
+    }
+  }
+
+  statement {
+    sid       = ""
+    effect    = "Allow"
+    resources = ["arn:aws:s3:::${var.common.env}-${var.common.project}-logs/*"]
+    actions   = ["s3:PutObject"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["logs.us-east-1.amazonaws.com"]
+    }
+  }
+}
 ############### EVENT_BRIDGE ###################
-# resource "aws_cloudwatch_event_rule" "rds_event" {
-#   name        = "dev-ugc-export-logs"
-#   schedule_expression = "rate(5 minutes)"
-# }
+resource "aws_cloudwatch_event_rule" "event" {
+  name        = "dev-ugc-export-logs"
+  schedule_expression = "rate(2 minutes)"
+}
 
-# resource "aws_cloudwatch_event_target" "lambda_target" {
-#   rule      = aws_cloudwatch_event_rule.rds_event.name
-#   target_id = "SendToLambda"
-#   arn       = aws_lambda_function.lambda.arn
-#   #role_arn  = aws_iam_role.lambda_event_role.arn
-# }
+resource "aws_cloudwatch_event_target" "lambda_target" {
+  rule      = aws_cloudwatch_event_rule.event.name
+  target_id = "SendToLambda"
+  arn       = aws_lambda_function.lambda.arn
+  #role_arn  = aws_iam_role.lambda_event_role.arn
+}
 
-# data "aws_iam_policy_document" "lambda_event_bridge_role" {
-#   statement {
-#     actions = ["sts:AssumeRole"]
-#     effect  = "Allow"
-#     principals {
-#       type        = "Service"
-#       identifiers = ["events.amazonaws.com"]
-#     }
-#   }
-# }
-
-# resource "aws_iam_role" "lambda_event_role" {
-#   name               = "${var.common.env}-${var.common.project}-lambda-event-bridge-role"
-#   assume_role_policy = data.aws_iam_policy_document.lambda_event_bridge_role.json
-# }
-
-# resource "aws_iam_role" "lambda_event_role" {
-#   name               = "${var.common.env}-${var.common.project}-lambda-event-bridge-role"
-#   assume_role_policy = data.aws_iam_policy_document.event_bridge_policy.json
-# }
-
-
-# data "aws_iam_policy_document" "event_bridge_policy" {
-#   statement {
-#     actions   = ["*"]
-#     resources = ["events:*"]
-#     effect    = "Allow"
-#   }
-# }
-
-# resource "aws_iam_policy" "event_bridge_policy" {
-#   policy = data.aws_iam_policy_document.lambda_event_bridge_role.json
-# }
+resource "aws_lambda_permission" "allow_cloudwatch_to_call_event" {
+    statement_id = "AllowExecutionFromCloudWatch"
+    action = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.lambda.function_name
+    principal = "events.amazonaws.com"
+    source_arn = aws_cloudwatch_event_rule.event.arn
+}

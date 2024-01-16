@@ -12,14 +12,6 @@ resource "aws_cloudwatch_log_group" "log_group_engine" {
   retention_in_days = 7
 }
 
-resource "aws_s3_bucket" "engine_s3" {
-  bucket = "${var.common.env}-${var.common.project}-engine-data"
-}
-
-resource "aws_s3_bucket" "slowly_s3" {
-  bucket = "${var.common.env}-${var.common.project}-slowly-data"
-}
-
 resource "aws_elasticache_cluster" "redis" {
   cluster_id = "${var.common.env}-${var.common.project}"
   node_type = var.node_type
