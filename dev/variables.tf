@@ -94,6 +94,10 @@ variable "domain_cf_static" {
   type = string
 }
 
+variable "domain_cf_samplenode" {
+  type = string
+}
+
 variable "cf_cert_arn" {
   type = string
 }
@@ -121,3 +125,5 @@ variable "private_subnet_numbers" {
 variable "codebuild_image" {}
 variable "codebuild_compute_type" {}
 variable "github_repos" {}
+
+variable "github_repos_fe" {}

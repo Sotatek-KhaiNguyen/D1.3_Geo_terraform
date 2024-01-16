@@ -145,6 +145,14 @@ module "static" {
   cf_cert_arn = var.cf_cert_arn
 }
 
+module "samplenode" {
+  source = "../modules/cloudfont"
+  common = local.common
+  name_cf = "samplenode"
+  domain_cf = var.domain_cf_samplenode
+  cf_cert_arn = var.cf_cert_arn
+}
+
 #=========================Loadbalancer==========================================
 module "alb" {
   source = "../modules/loadbalancer/alb"
@@ -225,4 +233,24 @@ module "codepipeline" {
   lambda_endpoint        = module.pipelinebase.lambda_endpoint
   lambda_secret          = module.pipelinebase.secret_key
   buildspec_file         = "./buildspec/${each.value.name}.tftpl"
+}
+
+module "codepipeline_fe" {
+  source = "../modules/pipeline_fe"
+  for_each = { for github in var.github_repos_fe : github["name"] => github }
+  common = local.common
+  github_repos           = var.github_repos
+  codebuild_image        = var.codebuild_image
+  codebuild_compute_type = var.codebuild_compute_type
+  bucketName             = module.pipelinebase.s3_bucket
+  codepipelineRoleArn    = module.pipelinebase.codepipeline_role_arn
+  gitBranch              = each.value.branch
+  gitRepo                = each.value.name
+  service                = each.value.service
+  buildspec_variables    = each.value.buildspec_variables
+  codebuildRoleArn       = module.pipelinebase.codebuild_role_arn
+  codedeployRoleArn      = module.pipelinebase.codedeploy_role_arn
+  lambda_endpoint        = module.pipelinebase.lambda_endpoint
+  lambda_secret          = module.pipelinebase.secret_key
+  buildspec_file         = "./buildspec_fe/${each.value.name}.tftpl"
 }

@@ -1,0 +1,37 @@
+version: 0.2
+env:
+  shell: bash 
+  parameter-store:
+      GITLABTOKEN: "GITLABTOKEN"
+phases:
+  install: 
+    runtime-version:
+        nodejs: 16
+  pre_build:
+    on-failure: ABORT
+    commands:
+        - echo 'Start pre build phase'
+        - export REPO_NAME=$(jq -r '.repo_name' metadata.json)
+        - export BRANCH_NAME=$(jq -r '.branch_name' metadata.json)
+        - mkdir working_dir && cd working_dir
+        - pwd
+        - git clone https://oauth2:$GITLABTOKEN@gitlab.com/grp_testing/$REPO_NAME
+        - pwd
+        - ls -la
+        - cd $REPO_NAME && git checkout $BRANCH_NAME
+        - export LASTEST_COMMIT_ID=`git log -1 --format=%H | cut -c 1-8`
+        - export IMAGE_TAG=$LASTEST_COMMIT_ID
+  build:
+    commands:
+      - npm install
+      - cp devops.html node_modules/
+  post_build:
+    commands:
+      - echo 'Syncing file to S3 ..'
+      - aws s3 sync ./node_modules s3://$FE_BUCKET --delete --exact-timestamps
+      - wait $!
+      - echo 'Invalidate the CloudFront cache'
+      - aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/*"
+cache:
+    paths:
+      - node_modules/**/*

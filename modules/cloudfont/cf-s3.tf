@@ -2,34 +2,16 @@ resource "aws_s3_bucket" "s3_static_page" {
     bucket = "${var.common.env}-${var.common.project}-${var.name_cf}"
 }
 
-# resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
-#     bucket = aws_s3_bucket.s3_static_page.bucket
-#     index_document {
-#         suffix = "index.html"
-#     }
+resource "aws_s3_bucket_website_configuration" "s3_web_config_storage" {
+    bucket = aws_s3_bucket.s3_static_page.bucket
+    index_document {
+        suffix = "index.html"
+    }
 
-#     error_document {
-#         key = "error.html"
-#     }
-# }
-
-# resource "aws_s3_bucket_policy" "policy_static_page" {
-#   bucket = aws_s3_bucket.s3_static_page.id
-
-#   policy = jsonencode({
-#     # Version = ""
-#     # Id      = ""
-#     Statement = [
-#       {
-#         Sid       = "AllowPublic"
-#         Effect    = "Allow"
-#         Principal = "*"
-#         Action    = "s3:GetObject"
-#         Resource  = "${aws_s3_bucket.s3_static_page.arn}/**"
-#       }
-#     ]
-#   })
-# }
+    error_document {
+        key = "error.html"
+    }
+}
 
 data "aws_iam_policy_document" "policy_doc" {
   # type = "CanonicalUser"
@@ -62,7 +44,7 @@ resource "aws_cloudfront_distribution" "cf_distribution" {
           origin_access_identity = aws_cloudfront_origin_access_identity.cf_oai.cloudfront_access_identity_path
         }
     }
-
+    default_root_object = "devops.html"
     restrictions {
       geo_restriction {
         restriction_type = "none"
@@ -109,4 +91,8 @@ output "cf_distribution_hosted_zone_id" {
 
 output "cf_distribution_id" {
   value = aws_cloudfront_distribution.cf_distribution.id
+}
+
+output "aws_s3_static_page" {
+  value = aws_s3_bucket.s3_static_page.bucket
 }

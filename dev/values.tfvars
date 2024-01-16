@@ -36,9 +36,10 @@ source_services = ["api"]
 domain_name_lb = "devops.donnytran.com"
 
 #=======================cf-fe=========================
-cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/230f0f65-1658-4493-89d6-47922ce4c896"
+cf_cert_arn = "arn:aws:acm:us-east-1:115228050885:certificate/0c9c7e80-e373-4089-9087-857adaa5ab9e"
 domain_cf_fe = "fe.devops.donnytran.com"
 domain_cf_static = "static.devops.donnytran.com"
+domain_cf_samplenode = "khai.devops.donnytran.com"
 
 #=======================ecs-scale===============================
 ecs_service = [
@@ -114,6 +115,24 @@ github_repos = [
       {
         key   = "REPOSITORY_URI"
         value = "115228050885.dkr.ecr.us-east-1.amazonaws.com/dev-ugc-geotech-web"
+      }
+    ] 
+  }
+]
+
+github_repos_fe = [
+  { 
+    service = ["samplenode"],
+    name = "samplenode", 
+    branch="main", 
+    buildspec_variables=[
+      {
+        key   = "FE_BUCKET"
+        value = "dev-ugc-geotech-samplenode"
+      },
+      {
+        key   = "CLOUDFRONT_DISTRIBUTION_ID"
+        value = "E2TSRDW28DXU4E"
       }
     ] 
   }
