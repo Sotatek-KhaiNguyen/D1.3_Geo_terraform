@@ -109,8 +109,8 @@ module "rds" {
 module "export_logs" {
   source = "../modules/export_logs"
   common = local.common
-  # dev_rds_cloudwatch_logs = module.rds.rds_cloudwatch_logs
-  # dev_rds_s3_logs = module.rds.rds_s3_logs
+  # dev_postgresql_log = module.rds.dev_postgresql_log
+  # dev_rds_s3_logs = module.rds.dev_rds_s3_logs
   # dev_redis_slowly_logs = module.redis.dev_redis_slowly_logs
   # dev_redis_engine_logs = module.redis.dev_redis_engine_logs
   # dev_redis_engine_s3_logs = module.redis.dev_redis_engine_s3_logs

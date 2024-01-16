@@ -81,15 +81,19 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = {
         #RDS_LOGS
-        # dev_rds_cloudwatch_logs = var.dev_rds_cloudwatch_logs
+        # dev_postgresql_log = var.dev_postgresql_log
         # dev_rds_s3_logs = var.dev_rds_s3_logs
-        #REDIS_LOGS
+        # #REDIS_LOGS
         # dev_redis_slowly_logs = var.dev_redis_slowly_logs
         # dev_redis_engine_logs = var.dev_redis_engine_logs
         # dev_redis_engine_s3_logs = var.dev_redis_engine_s3_logs
         # dev_redis_slowly_s3_logs = var.dev_redis_slowly_s3_logs
-        GROUP_CLOUDWATCH_NAME = "/aws/rds/instance/postgresql-db/postgresql"
-        DESTINATION_BUCKET = "collectlogsfordb"
+
+        dev_postgresql_log = "/aws/rds/instance/mysql-db/error"
+        dev_rds_s3_logs = "collectlogsachived"
+
+        dev_postgresql_log_test = "/aws/rds/instance/postgresql-db/postgresql"
+        dev_rds_s3_logs_test = "collectlogstest"
     }
   }
 }

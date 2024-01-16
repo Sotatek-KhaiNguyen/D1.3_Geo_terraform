@@ -1,0 +1,44 @@
+import boto3
+import os
+import datetime
+
+# GROUP_CLOUDWATCHS = [os.environ["${var.dev_postgresql_log}"], os.environ["${var.dev_redis_engine_logs}"], os.environ["${var.dev_redis_slowly_logs}"]]
+# DESTINATION_BUCKETS = [os.environ["${var.dev_rds_s3_logs}"], os.environ["${var.dev_redis_engine_s3_logs}"], os.environ["${var.dev_redis_slowly_s3_logs}"]]
+
+dev_postgresql_log = os.environ.get("dev_postgresql_log")
+dev_postgresql_log_test = os.environ.get("dev_postgresql_log_test")
+dev_rds_s3_logs = os.environ.get("dev_rds_s3_logs")
+dev_rds_s3_logs_test = os.environ.get("dev_rds_s3_logs_test")
+
+GROUP_CLOUDWATCHS = [dev_postgresql_log_test, dev_postgresql_log]
+DESTINATION_BUCKETS = [dev_rds_s3_logs_test, dev_rds_s3_logs]
+
+for numbers_log_name in range(len(GROUP_CLOUDWATCHS)):
+    GROUP_CLOUDWATCH_NAME = GROUP_CLOUDWATCHS[numbers_log_name]
+    DESTINATION_BUCKET = DESTINATION_BUCKETS[numbers_log_name]
+    PREFIX = "dev_ugc_geotech_achived_logs"
+    NDAYS = 0
+    nDays = int(NDAYS)
+
+
+    currentTime = datetime.datetime.now()
+    StartDate = currentTime - datetime.timedelta(days=nDays)
+    EndDate = currentTime - datetime.timedelta(days=nDays - 1)
+
+
+    fromDate = int(StartDate.timestamp() * 1000)
+    toDate = int(EndDate.timestamp() * 1000)
+
+    BUCKET_PREFIX = os.path.join(PREFIX, StartDate.strftime('%Y{0}%m{0}%d').format(os.path.sep))
+
+
+    def lambda_handler(event, context):
+        client = boto3.client('logs')
+        response = client.create_export_task(
+            logGroupName=GROUP_CLOUDWATCH_NAME,
+            fromTime=fromDate,
+            to=toDate,
+            destination=DESTINATION_BUCKET,
+            destinationPrefix=BUCKET_PREFIX
+            )
+        print(response)
