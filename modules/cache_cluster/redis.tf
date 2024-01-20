@@ -13,11 +13,12 @@ resource "aws_cloudwatch_log_group" "log_group_engine" {
 }
 
 resource "aws_elasticache_replication_group" "redis_cluster" {
-  replication_group_id       = "tf-redis-cluster"
-  description                = "example description"
-  node_type                  = "cache.t2.small"
-  port                       = 6379
-  parameter_group_name       = "default.redis3.2.cluster.on"
+  replication_group_id       = "${var.common.env}-${var.common.project}"
+  node_type                  = var.node_type
+  port                       = var.ports[0]
+  engine                     = var.engine
+  engine_version             = var.redis_engine_version
+  parameter_group_name       = var.parameter_group_name
   automatic_failover_enabled = true
 
   num_node_groups         = 2
@@ -30,8 +31,8 @@ resource "aws_elasticache_replication_group" "redis_cluster" {
     log_type         = "slow-log"
   }
   log_delivery_configuration {
-    destination      = aws_kinesis_firehose_delivery_stream.example.name
-    destination_type = "kinesis-firehose"
+    destination      = aws_cloudwatch_log_group.log_group_engine.name
+    destination_type = "cloudwatch-logs"
     log_format       = "json"
     log_type         = "engine-log"
   }

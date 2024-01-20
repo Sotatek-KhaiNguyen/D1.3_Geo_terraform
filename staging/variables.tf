@@ -31,12 +31,11 @@ variable "ssh_public_key" {
   type = string
 }
 #=======================redis cache=====================================
-
-variable "redis_engine_version" {
+variable "engine" {
   type = string
 }
 
-variable "num_cache_nodes" {
+variable "redis_engine_version" {
   type = string
 }
 
@@ -47,6 +46,11 @@ variable "node_type" {
 variable "ports" {
   type = list(string)
 }
+
+variable "parameter_group_name" {
+  type = string
+}
+
 
 #=======================rds=====================================
 variable "rds_port" {

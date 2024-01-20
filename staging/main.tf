@@ -38,8 +38,8 @@ locals {
 #========================tfstate management========================================
 terraform {
   backend "s3" {
-    bucket         = "terraform-state-ugc-dev"
-    key            = "dev/terraform.tfstate"
+    bucket         = "terraform-state-ugc-stg"
+    key            = "staging/terraform.tfstate"
     region         = "us-east-1"
   }
 }
@@ -74,14 +74,14 @@ module "ec2" {
 }
 
 #==========================Redis===============================================
-module "redis" {
-  source = "../modules/cache"
+module "redis_cluster" {
+  source = "../modules/cache_cluster"
   common = local.common
-  #network = var.network
+  engine = var.engine
   redis_engine_version = var.redis_engine_version
-  num_cache_nodes = var.num_cache_nodes
   node_type = var.node_type
   ports = var.ports
+  parameter_group_name = var.parameter_group_name
   network = {
     vpc_id = module.vpc.vpc_id
     subnet_ids = [module.vpc.private_subnet_ids[0]]

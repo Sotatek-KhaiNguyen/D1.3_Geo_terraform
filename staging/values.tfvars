@@ -1,6 +1,6 @@
 #=================common=======================
 project = "ugc-geotech"
-env = "dev"
+env = "stg"
 region = "us-east-1"
 account_id = "115228050885"
 
@@ -13,10 +13,11 @@ ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC3HN1YSS1zIQ01goxSEwpgfq
 
 
 #=======================redis cache=====================================
-redis_engine_version = "redis"
-num_cache_nodes = "1"
+engine = "redis"
+redis_engine_version = "7.1"
 node_type = "cache.t4g.medium"
 ports = ["6379"]
+parameter_group_name = "default.redis7.cluster.on"
 
 
 #=======================rds=====================================
