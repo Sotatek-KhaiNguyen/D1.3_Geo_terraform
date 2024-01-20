@@ -28,6 +28,20 @@ rds_name = "dbpostgresql"
 rds_class = "db.t3.micro"
 rds_strorage = "10"
 
+#=======================dynamoDB=====================================
+table_name = "ugc"
+hash_key = "testhashkey"
+
+dynamodb_tables = [
+  {
+    table_name = "ugc"
+    hash_key = "testhashkey"
+  },
+  {
+    table_name = "ugctest"
+    hash_key = "testhashkey2"
+  }
+]
 
 #========================ssm=====================================
 source_services = ["api"]

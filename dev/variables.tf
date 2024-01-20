@@ -77,6 +77,10 @@ variable "rds_strorage" {
     type = string
 }
 
+#========================DynamoDB======================
+
+variable "dynamodb_tables" {}
+
 #========================ssm======================
 variable "source_services" {
   type = set(string)

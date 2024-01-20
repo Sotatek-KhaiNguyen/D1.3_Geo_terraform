@@ -105,6 +105,15 @@ module "rds" {
   }
 }
 
+#========================DynamoDB================================================
+module "dynamodb" {
+  for_each = { for dynamodb in var.dynamodb_tables : dynamodb["table_name"] => dynamodb }
+  source = "../modules/dynamodb"
+  common = local.common
+  table_name = each.value.table_name
+  hash_key = each.value.hash_key
+}
+
 #===========================EXPORT_LOGS===============================================
 module "export_logs" {
   source = "../modules/export_logs"

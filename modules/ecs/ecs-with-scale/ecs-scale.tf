@@ -191,4 +191,30 @@ resource "aws_lb_listener_rule" "lb_listener_rule" {
 resource "aws_s3_bucket" "s3" {
   count       = var.use_s3_for_data == true ? 1 : 0
   bucket = "${var.common.env}-${var.common.project}-${var.container_name}-data"
+  
+}
+
+resource "aws_s3_bucket_policy" "allow_access_resource" {
+  count       = var.use_s3_for_data == true ? 1 : 0
+  bucket = aws_s3_bucket.s3[count.index].id
+  policy = data.aws_iam_policy_document.allow_access_resource.json
+}
+
+data "aws_iam_policy_document" "allow_access_resource" {
+  statement {
+    sid    = "AllAccess"
+    effect = "Allow"
+
+    resources = [
+      "arn:aws:s3:::${var.common.env}-${var.common.project}-${var.container_name}-data",
+      "arn:aws:s3:::${var.common.env}-${var.common.project}-${var.container_name}-data/*",
+    ]
+
+    actions = ["s3:*"]
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
 }
